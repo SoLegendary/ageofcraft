@@ -68,31 +68,45 @@ public class BuildingUtils {
 
     // returns a list of BPs that may reside in unique chunks for fog of war calcs
     public static ArrayList<BlockPos> getUniqueChunkBps(Building building) {
+        // AABB adjusted to include the max corner offset
         AABB aabb = new AABB(
                 building.minCorner,
-                building.maxCorner.offset(1,1,1)
+                building.maxCorner.offset(1, 1, 1)
         );
 
-        ArrayList<BlockPos> bps = new ArrayList<>();
-        double x = aabb.minX;
-        double z = aabb.minZ;
-        do {
-            do {
-                bps.add(new BlockPos(x, aabb.minY, z));
-                x += 16;
-            }
-            while (x <= aabb.maxX);
-            z += 16;
-            x = aabb.minX;
-        }
-        while (z <= aabb.maxZ);
+        // Calculate chunk-aligned boundaries (each chunk is 16x16 blocks)
+        int minChunkX = (int) Math.floor(aabb.minX / 16);
+        int maxChunkX = (int) Math.floor(aabb.maxX / 16);
+        int minChunkZ = (int) Math.floor(aabb.minZ / 16);
+        int maxChunkZ = (int) Math.floor(aabb.maxZ / 16);
 
-        // include far corners
-        bps.add(new BlockPos(aabb.maxX, aabb.minY, aabb.minZ));
-        bps.add(new BlockPos(aabb.minX, aabb.minY, aabb.maxZ));
-        bps.add(new BlockPos(aabb.maxX, aabb.minY, aabb.maxZ));
+        // Estimate size and initialize ArrayList for performance
+        int estimatedSize = (maxChunkX - minChunkX + 1) * (maxChunkZ - minChunkZ + 1);
+        ArrayList<BlockPos> bps = new ArrayList<>(estimatedSize);
+
+        // Iterate over all chunks in the AABB and add BlockPos at (x, minY, z)
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                // Convert chunk coordinates to block coordinates
+                int blockX = chunkX * 16;
+                int blockZ = chunkZ * 16;
+                bps.add(new BlockPos(blockX, (int) aabb.minY, blockZ));
+            }
+        }
+
+        // Add far corners if they aren't already included
+        addIfAbsent(bps, new BlockPos((int) aabb.maxX, (int) aabb.minY, (int) aabb.minZ));
+        addIfAbsent(bps, new BlockPos((int) aabb.minX, (int) aabb.minY, (int) aabb.maxZ));
+        addIfAbsent(bps, new BlockPos((int) aabb.maxX, (int) aabb.minY, (int) aabb.maxZ));
 
         return bps;
+    }
+
+    // Helper method to avoid duplicate additions
+    private static void addIfAbsent(ArrayList<BlockPos> bps, BlockPos pos) {
+        if (!bps.contains(pos)) {
+            bps.add(pos);
+        }
     }
 
     // given a string name return a new instance of that building
@@ -210,17 +224,26 @@ public class BuildingUtils {
 
     // returns whether the given pos is part of ANY building in the level
     // WARNING: very processing expensive!
-    public static boolean isPosPartOfAnyBuilding(boolean isClientSide, BlockPos bp, boolean onlyPlacedBlocks, int range) {
-        List<Building> buildings;
-        if (isClientSide)
-            buildings = BuildingClientEvents.getBuildings();
-        else
-            buildings = BuildingServerEvents.getBuildings();
+    public static boolean isPosPartOfAnyBuilding(
+            boolean isClientSide, BlockPos bp, boolean onlyPlacedBlocks, int range) {
 
-        for (Building building : buildings)
-            if (range == 0 || bp.distSqr(building.centrePos) < range * range)
-                if (building.isPosPartOfBuilding(bp, onlyPlacedBlocks))
+        // Get the buildings list based on client or server
+        List<Building> buildings = isClientSide
+                ? BuildingClientEvents.getBuildings()
+                : BuildingServerEvents.getBuildings();
+
+        // Pre-compute range squared to avoid repeated calculations
+        int rangeSquared = range * range;
+
+        // Loop over buildings and return true as soon as a match is found
+        for (Building building : buildings) {
+            if (range == 0 || bp.distSqr(building.centrePos) < rangeSquared) {
+                // Short-circuit if the position is part of the building
+                if (building.isPosPartOfBuilding(bp, onlyPlacedBlocks)) {
                     return true;
+                }
+            }
+        }
         return false;
     }
 

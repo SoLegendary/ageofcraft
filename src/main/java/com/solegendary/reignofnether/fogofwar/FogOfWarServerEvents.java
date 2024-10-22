@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static com.solegendary.reignofnether.player.PlayerServerEvents.sendMessageToAllPlayers;
 
@@ -40,49 +41,56 @@ public class FogOfWarServerEvents {
         serverLevel = (ServerLevel) evt.level;
     }
 
-    // sets the fog to match what all
+    // Sync fog status across all clients
     private static void syncClientFog() {
         FogOfWarClientboundPacket.setEnabled(enabled);
     }
 
-    // updates all blocks in the renderchunk to force all clients to match the server
+    // Sync blocks in the render chunk to ensure all clients match the server
     public static void syncClientBlocks(BlockPos renderChunkOrigin) {
-        if (serverLevel == null)
-            return;
+        if (serverLevel == null) return;
 
-        ArrayList<Pair<BlockPos, BlockState>> plants = new ArrayList<>();
+        List<Pair<BlockPos, BlockState>> plantBlocks = new ArrayList<>();
+        List<BlockPos> blockPositions = new ArrayList<>(16 * 16 * 16);
 
+        // Collect blocks in the chunk and detect plants to update
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
-                    BlockPos bp = renderChunkOrigin.offset(x,y,z);
-                    BlockState bs = serverLevel.getBlockState(bp);
-                    if (bs.getMaterial() == Material.PLANT ||
-                        bs.getMaterial() == Material.REPLACEABLE_PLANT ||
-                        bs.getMaterial() == Material.REPLACEABLE_WATER_PLANT ||
-                        bs.getMaterial() == Material.REPLACEABLE_FIREPROOF_PLANT) {
-                        plants.add(new Pair<>(bp, bs));
+                    BlockPos bp = renderChunkOrigin.offset(x, y, z);
+                    BlockState blockState = serverLevel.getBlockState(bp);
+
+                    // Filter plant-related blocks and store them separately
+                    Material material = blockState.getMaterial();
+                    if (material == Material.PLANT || material == Material.REPLACEABLE_PLANT ||
+                            material == Material.REPLACEABLE_WATER_PLANT || material == Material.REPLACEABLE_FIREPROOF_PLANT) {
+                        plantBlocks.add(new Pair<>(bp, blockState));
+                    } else {
+                        blockPositions.add(bp); // Track positions for resetting other blocks
                     }
                 }
             }
         }
-        for (Pair<BlockPos, BlockState> plant : plants)
+
+        // First, set plant blocks to air (in one go, if possible)
+        for (Pair<BlockPos, BlockState> plant : plantBlocks) {
             serverLevel.setBlockAndUpdate(plant.getFirst(), Blocks.AIR.defaultBlockState());
-
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    BlockPos bp = renderChunkOrigin.offset(x,y,z);
-                    BlockState bs = serverLevel.getBlockState(bp);
-                    serverLevel.setBlockAndUpdate(bp, Blocks.BEDROCK.defaultBlockState());
-                    serverLevel.setBlockAndUpdate(bp, bs);
-                }
-            }
         }
-        plants.sort(Comparator.comparing(p -> ((Pair<BlockPos, BlockState>) p).getFirst().getY()).reversed());
-        for (Pair<BlockPos, BlockState> plant : plants)
-            serverLevel.setBlockAndUpdate(plant.getFirst(), plant.getSecond());
 
+        // Update all other blocks by replacing them with bedrock and resetting to their original state
+        for (BlockPos bp : blockPositions) {
+            BlockState originalState = serverLevel.getBlockState(bp);
+            serverLevel.setBlockAndUpdate(bp, Blocks.BEDROCK.defaultBlockState());
+            serverLevel.setBlockAndUpdate(bp, originalState);
+        }
+
+        // Sort plant blocks by Y position descending, then restore them
+        plantBlocks.sort(Comparator.comparing(p -> p.getFirst().getY(), Comparator.reverseOrder()));
+        for (Pair<BlockPos, BlockState> plant : plantBlocks) {
+            serverLevel.setBlockAndUpdate(plant.getFirst(), plant.getSecond());
+        }
+
+        // Unmute chunks after updating
         FrozenChunkClientboundPacket.unmuteChunks();
     }
 }

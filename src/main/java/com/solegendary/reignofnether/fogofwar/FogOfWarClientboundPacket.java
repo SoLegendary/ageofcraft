@@ -56,15 +56,15 @@ public class FogOfWarClientboundPacket {
 
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> {
-                    if (unitId > 0)
-                        FogOfWarClientEvents.revealRangedUnit(playerName, unitId);
-                    else if (playerName.isEmpty())
-                        FogOfWarClientEvents.setEnabled(enable);
-                    else
-                        FogOfWarClientEvents.revealOrHidePlayer(enable, playerName);
-                    success.set(true);
-                });
+                    () -> () -> {
+                        if (unitId > 0)
+                            FogOfWarClientEvents.revealRangedUnit(playerName, unitId);
+                        else if (playerName.isEmpty())
+                            FogOfWarClientEvents.setEnabled(enable);
+                        else
+                            FogOfWarClientEvents.revealOrHidePlayer(enable, playerName);
+                        success.set(true);
+                    });
         });
         ctx.get().setPacketHandled(true);
         return success.get();

@@ -1,6 +1,8 @@
 package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.ReignOfNether;
+import com.solegendary.reignofnether.block.POIBlock;
+import com.solegendary.reignofnether.block.POIType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -15,6 +17,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class BlockRegistrar {
@@ -39,6 +43,20 @@ public class BlockRegistrar {
                     .sound(SoundType.WART_BLOCK)),
             CreativeModeTab.TAB_BUILDING_BLOCKS
     );
+
+    public static final Map<POIType, RegistryObject<Block>> POI_BLOCKS = new HashMap<>();
+    static {
+        for (POIType type : POIType.values()) {
+            POI_BLOCKS.put(type, registerPOIBlock(type));
+        }
+    }
+    private static RegistryObject<Block> registerPOIBlock(POIType type) {
+        return registerBlock(
+                type.name().toLowerCase() + "_poi_block",
+                () -> new POIBlock(type.getDisplayName()),
+                CreativeModeTab.TAB_MISC
+        );
+    }
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {
