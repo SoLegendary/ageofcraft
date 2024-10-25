@@ -2,34 +2,31 @@ package com.solegendary.reignofnether.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import com.solegendary.reignofnether.hud.TitleClientEvents;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.gui.TitleScreenModUpdateIndicator;
-import net.minecraftforge.internal.BrandingControl;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import javax.annotation.Nullable;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.narration.NarratedElementType;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.server.packs.resources.ResourceManager;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 
 @Mixin(TitleScreen.class)
@@ -41,13 +38,15 @@ public class TitleScreenMixin extends Screen {
             new ResourceLocation("minecraft", "textures/gui/title/edition.png");
     private static final ResourceLocation DISCORD_TEXTURE =
             new ResourceLocation("minecraft", "textures/gui/title/discord.png");
+    private static final ResourceLocation LILYPAD_TEXTURE =
+            new ResourceLocation("minecraft", "textures/gui/title/badge.png");
 
     @Shadow @Final private PanoramaRenderer panorama;
     @Shadow @Final private boolean fading;
     @Shadow private long fadeInStart;
     @Nullable @Shadow private TitleScreenModUpdateIndicator modUpdateNotification;
 
-    private Button lilypadButton;
+    private AbstractWidget lilypadButton;
     private AbstractWidget discordButton;
 
     protected TitleScreenMixin(Component pTitle) {
@@ -71,16 +70,41 @@ public class TitleScreenMixin extends Screen {
         int lilypadX = this.width - buttonWidth - 10;
         int lilypadY = this.height - buttonHeight - 30;
 
-        this.lilypadButton = new Button(
-                lilypadX, lilypadY, buttonWidth, buttonHeight,
-                Component.literal("Choose Lillypad Hosting"),
-                button -> openLink("https://lilypad.gg/reignofnether")
-        );
+        this.lilypadButton = new AbstractWidget(lilypadX, lilypadY, 128, 32, Component.empty()) {
+            @Override
+            public void onClick(double pMouseX, double pMouseY) {
+                openLink("https://lilypad.gg/reignofnether");
+            }
+
+            @Override
+            public void updateNarration(NarrationElementOutput output) {
+                output.add(NarratedElementType.TITLE, Component.literal("Choose Lilypad Hosting"));
+            }
+
+            @Override
+            public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, LILYPAD_TEXTURE);
+
+                RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+                pPoseStack.pushPose();
+                float scale = 0.8f;
+                pPoseStack.translate(this.x, this.y, 0);
+                pPoseStack.scale(scale, scale, 1.0f);
+
+                blit(pPoseStack, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+
+                pPoseStack.popPose();
+            }
+
+        };
 
         int discordX = lilypadX;
         int discordY = lilypadY - 28 - 5;
 
-        this.discordButton = new AbstractWidget(discordX, discordY, 299, 94, Component.empty()) {
+        this.discordButton = new AbstractWidget(discordX, discordY, 128, 45, Component.empty()) {
             @Override
             public void onClick(double pMouseX, double pMouseY) {
                 openLink("https://discord.gg/uR6FWdUcw3");
@@ -96,10 +120,12 @@ public class TitleScreenMixin extends Screen {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderTexture(0, DISCORD_TEXTURE);
 
-                pPoseStack.pushPose();
+                RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-                float scaleX = 0.35f;
-                float scaleY = 0.35f;
+                pPoseStack.pushPose();
+                float scaleX = 0.8f;
+                float scaleY = 0.8f;
 
                 pPoseStack.translate(this.x, this.y, 0);
                 pPoseStack.scale(scaleX, scaleY, 1.0f);
@@ -108,9 +134,8 @@ public class TitleScreenMixin extends Screen {
 
                 pPoseStack.popPose();
             }
+
         };
-
-
 
         this.addRenderableWidget(this.lilypadButton);
         this.addRenderableWidget(this.discordButton);
@@ -162,33 +187,6 @@ public class TitleScreenMixin extends Screen {
 
         ForgeHooksClient.renderMainMenu((TitleScreen) Minecraft.getInstance().screen,
                 pPoseStack, this.font, this.width, this.height, alphaMask);
-
-        if (TitleClientEvents.splash != null) {
-            pPoseStack.pushPose();
-            pPoseStack.translate(this.width / 2 + 90, 70.0, 0.0);
-            pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(-20.0F));
-            float scale = 1.8F - Mth.abs(Mth.sin((float) (Util.getMillis() % 1000L) / 1000.0F * 6.2831855F) * 0.1F);
-            scale = scale * 100.0F / (float) (this.font.width(TitleClientEvents.splash) + 32);
-            pPoseStack.scale(scale, scale, scale);
-            int splashX = Math.max(0, this.font.width(TitleClientEvents.splash) / 5);
-            drawCenteredString(pPoseStack, this.font, TitleClientEvents.splash, splashX + 14, splashX - 2, 16776960 | alphaMask);
-            pPoseStack.popPose();
-        }
-
-        BrandingControl.forEachLine(true, true, (line, text) -> {
-            drawString(pPoseStack, this.font, text, 2, this.height - (10 + line * (9 + 1)), 16777215 | alphaMask);
-        });
-
-        BrandingControl.forEachAboveCopyrightLine((line, text) -> {
-            int xPos = this.width - this.font.width(text);
-            drawString(pPoseStack, this.font, text, xPos, this.height - (10 + (line + 1) * (9 + 1)), 16777215 | alphaMask);
-        });
-
-        for (GuiEventListener child : this.children()) {
-            if (child instanceof AbstractWidget widget) {
-                widget.setAlpha(alpha);
-            }
-        }
 
         super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 
