@@ -55,28 +55,23 @@ public class HelperButtons {
             idleWorkerIds::isEmpty,
             () -> true,
             () -> {
-                if (MC.level == null)
-                    return;
+                if (MC.level == null) return;
 
                 if (Keybindings.ctrlMod.isDown()) {
                     UnitClientEvents.clearSelectedUnits();
-                    for (int id : idleWorkerIds) {
-                        if (idleWorkerIndex < idleWorkerIds.size()) {
-                            Entity entity = MC.level.getEntity(idleWorkerIds.get(idleWorkerIndex));
-                            if (entity instanceof WorkerUnit) {
-                                UnitClientEvents.addSelectedUnit((LivingEntity) entity);
-                            }
-                            idleWorkerIndex++;
-                        } else {
-                            idleWorkerIndex = 0; // Reset to zero if out of bounds
+                    for (Integer idleWorkerId : idleWorkerIds) {
+                        Entity entity = MC.level.getEntity(idleWorkerId);
+                        if (entity instanceof WorkerUnit) {
+                            UnitClientEvents.addSelectedUnit((LivingEntity) entity);
                         }
                     }
+                    idleWorkerIndex = 0;
                 } else {
-                    if (idleWorkerIndex >= idleWorkerIds.size() || idleWorkerIndex < 0) {
-                        idleWorkerIndex = 0; // Reset to zero if out of bounds
+                    if (!idleWorkerIds.isEmpty() && idleWorkerIndex >= idleWorkerIds.size()) {
+                        idleWorkerIndex = 0;
                     }
 
-                    if (idleWorkerIndex < idleWorkerIds.size()) {
+                    if (!idleWorkerIds.isEmpty()) {
                         Entity entity = MC.level.getEntity(idleWorkerIds.get(idleWorkerIndex));
                         if (entity instanceof WorkerUnit) {
                             OrthoviewClientEvents.centreCameraOnPos(entity.getX(), entity.getZ());
@@ -84,11 +79,10 @@ public class HelperButtons {
                             UnitClientEvents.addSelectedUnit((LivingEntity) entity);
                         }
                         idleWorkerIndex++;
-                    }
 
-                    // Reset idleWorkerIndex if it exceeds the size after increment
-                    if (idleWorkerIndex >= idleWorkerIds.size()) {
-                        idleWorkerIndex = 0;
+                        if (idleWorkerIndex >= idleWorkerIds.size()) {
+                            idleWorkerIndex = 0;
+                        }
                     }
                 }
             },
