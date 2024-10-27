@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -58,14 +59,13 @@ public class ResearchSculkAmplifiers extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchSculkAmplifiers.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Wardens can Sonic Boom Sculk Calaysts to split the boom ", Style.EMPTY),
-                FormattedCharSequence.forward("onto 3 random nearby enemies within a range of " + SPLIT_BOOM_RANGE, Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Stronghold.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_sculk_amplifiers.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_sculk_amplifiers.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_sculk_amplifiers.description2").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_sculk_amplifiers.requires_stronghold").getString(), Style.EMPTY)
             )
         );
     }

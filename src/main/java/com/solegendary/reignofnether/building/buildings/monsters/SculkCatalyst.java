@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -203,14 +204,29 @@ public class SculkCatalyst extends Building implements NightSource {
                 () -> BuildingClientEvents.setBuildingToPlace(SculkCatalyst.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(SculkCatalyst.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.sculk_catalyst.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A pillar which spreads sculk when nearby units die.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.sculk_catalyst.description1").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Distorts time to midnight within a " + nightRangeMin + " block radius.", Style.EMPTY),
-                        FormattedCharSequence.forward("Nearby sculk extends this range up to " + nightRangeMax + " and ", Style.EMPTY),
-                        FormattedCharSequence.forward("provides absorption health.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.sculk_catalyst.description2", nightRangeMin).getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.sculk_catalyst.description3", nightRangeMax).getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.sculk_catalyst.description4").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

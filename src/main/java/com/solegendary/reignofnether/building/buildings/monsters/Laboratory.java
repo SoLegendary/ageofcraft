@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.ability.abilities.CallLightning;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -113,11 +114,20 @@ public class Laboratory extends ProductionBuilding {
             () -> BuildingClientEvents.setBuildingToPlace(Laboratory.class),
             null,
             List.of(
-                FormattedCharSequence.forward(Laboratory.buildingName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A sinister lab that can research new technologies", Style.EMPTY),
-                FormattedCharSequence.forward("based on the other buildings that have been built.", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.laboratory.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
+                    ResourceCosts.getFormattedCost(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.laboratory.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.laboratory.description2").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

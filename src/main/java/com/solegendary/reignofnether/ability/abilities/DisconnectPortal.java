@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -56,7 +57,7 @@ public class DisconnectPortal extends Ability {
             () -> UnitClientEvents.sendUnitCommand(UnitAction.DISCONNECT_PORTAL),
             null,
             List.of(
-                    FormattedCharSequence.forward("Sever Connection", Style.EMPTY.withBold(true))
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.sever_connection").getString(), Style.EMPTY)
             ),
             this
         );

@@ -15,6 +15,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -79,13 +80,25 @@ public class Library extends ProductionBuilding {
             () -> BuildingClientEvents.setBuildingToPlace(Library.class),
             null,
             List.of(
-                FormattedCharSequence.forward(Library.buildingName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("An enchanting table surrounded by pillars of books.", Style.EMPTY),
-                FormattedCharSequence.forward("Used to research magic-related upgrades.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires an arcane tower.", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.library.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
+                    ResourceCosts.getFormattedCost(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.library.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.library.description2").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.library.requirement").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

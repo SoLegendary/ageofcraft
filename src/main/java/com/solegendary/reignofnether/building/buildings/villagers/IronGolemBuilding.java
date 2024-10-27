@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.villagers.IronGolemProd;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -89,13 +90,22 @@ public class IronGolemBuilding extends Building {
             () -> BuildingClientEvents.setBuildingToPlace(IronGolemBuilding.class),
             null,
             List.of(
-                FormattedCharSequence.forward(IronGolemBuilding.buildingName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedPopAndTime(IronGolemProd.cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("An Iron Golem that can be built in the field.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires research at a Blacksmith", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.iron_golem_building.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedPopAndTime(IronGolemProd.cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.iron_golem_building.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.iron_golem_building.requirement").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

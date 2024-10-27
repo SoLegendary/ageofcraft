@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -66,11 +67,24 @@ public class NetherwartFarm extends Building {
                 () -> BuildingClientEvents.setBuildingToPlace(NetherwartFarm.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(NetherwartFarm.buildingName, Style.EMPTY.withBold(true)),
-                        FormattedCharSequence.forward("\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  per  crop  planted", MyRenderer.iconStyle),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.netherwart_farm.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
+                        FormattedCharSequence.forward(
+                                "\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  " +
+                                        Component.translatable("building.reignofnether.netherwart_farm.cost_suffix").getString(),
+                                MyRenderer.iconStyle
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A field of netherwart that can be farmed collect food.", Style.EMPTY),
-                        FormattedCharSequence.forward("Workers automatically use wood to replant while working.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.netherwart_farm.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.netherwart_farm.description2").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

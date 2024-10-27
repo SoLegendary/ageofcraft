@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.tutorial.TutorialStage;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -68,11 +69,24 @@ public class WheatFarm extends Building {
                 () -> BuildingClientEvents.setBuildingToPlace(WheatFarm.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(WheatFarm.buildingName, Style.EMPTY.withBold(true)),
-                        FormattedCharSequence.forward("\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  per  crop  planted", MyRenderer.iconStyle),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.wheat_farm.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
+                        FormattedCharSequence.forward(
+                                "\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  " +
+                                        Component.translatable("building.reignofnether.wheat_farm.cost_suffix").getString(),
+                                MyRenderer.iconStyle
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A wheat field that be can tilled to collect food.", Style.EMPTY),
-                        FormattedCharSequence.forward("Workers automatically use wood to replant seeds while working.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.wheat_farm.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.wheat_farm.description2").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

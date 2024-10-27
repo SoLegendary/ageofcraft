@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,12 +55,12 @@ public class ResearchBlazeFirewall extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchBlazeFirewall.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_blaze_firewall.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Allows Blazes to fire a single shot that ignites all", Style.EMPTY),
-                        FormattedCharSequence.forward("blocks in a line, but disables their attacks temporarily.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_blaze_firewall.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_blaze_firewall.description2").getString(), Style.EMPTY)
                 )
         );
     }

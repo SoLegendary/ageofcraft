@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -60,11 +61,11 @@ public class ResearchPillagerCrossbows extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchPillagerCrossbows.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_pillager_crossbows.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Enchants the crossbows of all pillagers with multishot", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_pillager_crossbows.description").getString(), Style.EMPTY)
                 )
         );
     }

@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -55,10 +56,10 @@ public class CastSummonVexes extends Ability {
             () -> UnitClientEvents.sendUnitCommand(UnitAction.CAST_SUMMON_VEXES),
             null,
             List.of(
-                FormattedCharSequence.forward("Summon Vexes", Style.EMPTY.withBold(true)),
-                FormattedCharSequence.forward("\uE004  " + CD_MAX_SECONDS + "s", MyRenderer.iconStyle),
-                FormattedCharSequence.forward("After a long delay, summon " + EvokerUnit.SUMMON_VEXES_AMOUNT + " flying vexes that attack", Style.EMPTY),
-                FormattedCharSequence.forward("the evoker's target. Vexes start to die off after " + VEX_DURATION_SECONDS + " seconds.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.summon_vexes").getString(), Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward("\uE004  " + CD_MAX_SECONDS + "s", MyRenderer.iconStyle),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.summon_vexes.description1", EvokerUnit.SUMMON_VEXES_AMOUNT).getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.summon_vexes.description2", VEX_DURATION_SECONDS).getString(), Style.EMPTY)
             ),
             this
         );

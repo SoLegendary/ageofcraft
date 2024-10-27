@@ -14,6 +14,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -70,14 +71,29 @@ public class SpruceBridge extends AbstractBridge {
                 () -> BuildingClientEvents.setBuildingToPlace(SpruceBridge.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(SpruceBridge.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spruce_bridge.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A bridge built to traverse water.", Style.EMPTY),
-                        FormattedCharSequence.forward("Must be connected to land or another bridge.", Style.EMPTY),
-                        FormattedCharSequence.forward("Can be built over lava (but isn't fireproof!)", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spruce_bridge.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spruce_bridge.description2").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spruce_bridge.description3").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Bridges can be repaired or attacked by anyone.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spruce_bridge.description4").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

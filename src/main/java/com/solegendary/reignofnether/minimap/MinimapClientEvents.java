@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -151,7 +152,12 @@ public class MinimapClientEvents {
             () -> true,
             () -> shouldToggleSize = true,
             () -> { },
-            List.of(FormattedCharSequence.forward(largeMap ? "Close" : "Open large map", Style.EMPTY))
+            List.of(
+                    FormattedCharSequence.forward(
+                            Component.translatable(largeMap ? "hud.reignofnether.map.close" : "hud.reignofnether.map.open_large").getString(),
+                            Style.EMPTY
+                    )
+            )
         );
     }
 

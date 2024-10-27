@@ -20,6 +20,7 @@ import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -90,13 +91,13 @@ public class PromoteIllager extends Ability {
             () -> CursorClientEvents.setLeftClickAction(UnitAction.PROMOTE_ILLAGER),
             null,
             List.of(
-                    FormattedCharSequence.forward("Promote Illager", Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.promote_illager").getString(), Style.EMPTY.withBold(true)),
                     FormattedCharSequence.forward("\uE004  " + CD_MAX/20 + "s  \uE005  " + RANGE, MyRenderer.iconStyle),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Promote an illager to a captain, giving it a banner that gives", Style.EMPTY),
-                    FormattedCharSequence.forward("a speed buff to all friendly units in a " + BUFF_RANGE + " block radius.", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.promote_illager.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.promote_illager.description2", BUFF_RANGE).getString(), Style.EMPTY),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("You may only have one captain at a time per upgraded castle.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.promote_illager.description3").getString(), Style.EMPTY)
             ),
             this
         );

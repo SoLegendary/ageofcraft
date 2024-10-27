@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -53,14 +54,13 @@ public class ResearchCastleFlag extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchCastleFlag.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_castle_flag.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Upgrades this castle to be able to promote an illager unit", Style.EMPTY),
-                        FormattedCharSequence.forward("to a captain that provides a speed aura to friendly units.", Style.EMPTY),
-                        FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Each upgraded castle may only support one captain at a time.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_castle_flag.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_castle_flag.description2").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_castle_flag.description3").getString(), Style.EMPTY)
                 )
         );
     }

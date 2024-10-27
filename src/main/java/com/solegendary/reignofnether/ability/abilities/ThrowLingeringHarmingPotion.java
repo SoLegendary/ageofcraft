@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.villagers.WitchUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -51,9 +52,9 @@ public class ThrowLingeringHarmingPotion extends Ability {
             () -> CursorClientEvents.setLeftClickAction(UnitAction.THROW_LINGERING_HARMING_POTION),
             null,
             List.of(
-                FormattedCharSequence.forward("Lingering Harming Potion", Style.EMPTY.withBold(true)),
-                FormattedCharSequence.forward("\uE006  3  " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + witchUnit.getPotionThrowRange(), MyRenderer.iconStyle),
-                FormattedCharSequence.forward("Throw a potion that leaves a cloud of deadly gas.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.lingering_harming_potion").getString(), Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward("\uE006  3  " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + witchUnit.getPotionThrowRange(), MyRenderer.iconStyle),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.lingering_harming_potion.description").getString(), Style.EMPTY)
             ),
             this
         );

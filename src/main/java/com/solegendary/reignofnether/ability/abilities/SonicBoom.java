@@ -17,6 +17,7 @@ import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -56,10 +57,10 @@ public class SonicBoom extends Ability {
                 () -> CursorClientEvents.setLeftClickAction(UnitAction.CAST_SONIC_BOOM),
                 null,
                 List.of(
-                        FormattedCharSequence.forward("Sonic Boom", Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.sonic_boom").getString(), Style.EMPTY.withBold(true)),
                         FormattedCharSequence.forward("\uE006  " + WardenUnit.SONIC_BOOM_DAMAGE + "  " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + WardenUnit.SONIC_BOOM_RANGE, MyRenderer.iconStyle),
-                        FormattedCharSequence.forward("After a short delay, fire a targeted wave of sound at the", Style.EMPTY),
-                        FormattedCharSequence.forward("target, dealing heavy damage and knocking it far away.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.sonic_boom.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.sonic_boom.description2").getString(), Style.EMPTY)
                 ),
                 this
         );

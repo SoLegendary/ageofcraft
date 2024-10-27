@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.unit.units.monsters.WardenProd;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -116,15 +117,30 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
             () -> BuildingClientEvents.setBuildingToPlace(Stronghold.class),
             null,
             List.of(
-                    FormattedCharSequence.forward(Stronghold.buildingName, Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.stronghold.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
                     ResourceCosts.getFormattedCost(cost),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("A villainous stronghold that can produce wardens ", Style.EMPTY),
-                    FormattedCharSequence.forward("and garrison up to " + MAX_OCCUPANTS + " units.", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.stronghold.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.stronghold.description2", MAX_OCCUPANTS).getString(),
+                            Style.EMPTY
+                    ),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Distorts time to midnight within a " + nightRange + " block radius", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.stronghold.description3", nightRange).getString(),
+                            Style.EMPTY
+                    ),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Requires a Graveyard, Spider Lair and Dungeon.", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.stronghold.requirement").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

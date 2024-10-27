@@ -8,6 +8,7 @@ import com.solegendary.reignofnether.registrars.SoundRegistrar;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,8 +51,8 @@ public class AttackWarningClientEvents {
                 lastAttackPos = null;
             },
             List.of(
-                FormattedCharSequence.forward("Go to alert", Style.EMPTY),
-                FormattedCharSequence.forward("(Right click to ignore)", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("attackwarning.reignofnether.go_to_alert").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("attackwarning.reignofnether.go_to_alert.ignore_instruction").getString(), Style.EMPTY)
             )
         );
     }

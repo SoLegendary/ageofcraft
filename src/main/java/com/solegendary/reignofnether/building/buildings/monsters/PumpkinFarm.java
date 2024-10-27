@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -66,11 +67,24 @@ public class PumpkinFarm extends Building {
                 () -> BuildingClientEvents.setBuildingToPlace(PumpkinFarm.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(PumpkinFarm.buildingName, Style.EMPTY.withBold(true)),
-                        FormattedCharSequence.forward("\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  per  crop  planted", MyRenderer.iconStyle),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.pumpkin_farm.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
+                        FormattedCharSequence.forward(
+                                "\uE001  " + cost.wood + "  +  " + ResourceCosts.REPLANT_WOOD_COST + "  " +
+                                        Component.translatable("building.reignofnether.pumpkin_farm.cost_suffix").getString(),
+                                MyRenderer.iconStyle
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A pumpkin field that be can harvested to collect food.", Style.EMPTY),
-                        FormattedCharSequence.forward("Pumpkins don't need to replanted but farms cost more up front.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.pumpkin_farm.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.pumpkin_farm.description2").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

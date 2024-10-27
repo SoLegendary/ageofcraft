@@ -29,6 +29,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.model.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -437,7 +438,8 @@ public class HudClientEvents {
                                 () -> true,
                                 () -> sendUnitCommand(UnitAction.RETURN_RESOURCES_TO_CLOSEST),
                                 null,
-                                List.of(FormattedCharSequence.forward("Drop off resources", Style.EMPTY))
+                                List.of(FormattedCharSequence.forward(
+                                        Component.translatable("tooltip.reignofnether.drop_off_resources").getString(), Style.EMPTY))
                         );
                         returnButton.render(evt.getPoseStack(), blitX + 10, blitY + 38, mouseX, mouseY);
                         renderedButtons.add(returnButton);
@@ -592,8 +594,15 @@ public class HudClientEvents {
                         case ORE -> actionButton.iconResource = new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/pickaxe.png");
                     }
                     actionButton.tooltipLines = List.of(
-                            FormattedCharSequence.forward("Gather Resources (" + UnitClientEvents.getSelectedUnitResourceTarget() + ")", Style.EMPTY),
-                            FormattedCharSequence.forward("Click to change target resource", Style.EMPTY));
+                            FormattedCharSequence.forward(
+                                    Component.translatable("tooltip.reignofnether.gather_resources", UnitClientEvents.getSelectedUnitResourceTarget()).getString(),
+                                    Style.EMPTY
+                            ),
+                            FormattedCharSequence.forward(
+                                    Component.translatable("tooltip.reignofnether.change_resource_target").getString(),
+                                    Style.EMPTY
+                            )
+                    );
                 }
                 actionButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
                 renderedButtons.add(actionButton);
@@ -769,12 +778,16 @@ public class HudClientEvents {
             }
 
             blitY = resourceBlitYStart;
+
+
             for (String resourceName : new String[]{ "Food", "Wood", "Ore", "Population" }) {
                 List<FormattedCharSequence> tooltip;
                 if (resourceName.equals("Population"))
-                    tooltip = List.of(FormattedCharSequence.forward(resourceName + " (Max: " + maxPopulation + ")", Style.EMPTY));
+                    tooltip = List.of(FormattedCharSequence.forward(
+                            Component.translatable("tooltip.reignofnether.population", maxPopulation).getString(), Style.EMPTY));
                 else
-                    tooltip = List.of(FormattedCharSequence.forward(resourceName, Style.EMPTY));
+                    tooltip = List.of(FormattedCharSequence.forward(
+                            Component.translatable("tooltip.reignofnether." + resourceName.toLowerCase()).getString(), Style.EMPTY));
                 if (mouseX >= blitX &&
                         mouseY >= blitY &&
                         mouseX < blitX + iconFrameSize &&
@@ -793,9 +806,11 @@ public class HudClientEvents {
                                 .filter(u -> u instanceof WorkerUnit &&
                                         UnitClientEvents.getPlayerToEntityRelationship(u) == Relationship.OWNED)
                                 .toList().size();
-                        tooltipWorkersAssigned = List.of(FormattedCharSequence.forward("Total workers: " + numWorkers, Style.EMPTY));
+                        tooltipWorkersAssigned = List.of(FormattedCharSequence.forward(
+                                Component.translatable("tooltip.reignofnether.total_workers", numWorkers).getString(), Style.EMPTY));
                     } else {
-                        tooltipWorkersAssigned = List.of(FormattedCharSequence.forward("Workers on " + resourceName.toLowerCase(), Style.EMPTY));
+                        tooltipWorkersAssigned = List.of(FormattedCharSequence.forward(
+                                Component.translatable("tooltip.reignofnether.workers_on", resourceName.toLowerCase()).getString(), Style.EMPTY));
                     }
                     MyRenderer.renderTooltip(evt.getPoseStack(), tooltipWorkersAssigned, mouseX + 5, mouseY);
 

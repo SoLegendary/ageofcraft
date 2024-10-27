@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.WitchUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -55,10 +56,10 @@ public class FirewallShot extends Ability {
                 () -> CursorClientEvents.setLeftClickAction(UnitAction.SHOOT_FIREWALL),
                 null,
                 List.of(
-                        FormattedCharSequence.forward("Fire Wall Shot", Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.fire_wall_shot").getString(), Style.EMPTY.withBold(true)),
                         FormattedCharSequence.forward("\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + RANGE, MyRenderer.iconStyle),
-                        FormattedCharSequence.forward("Fire an accurate shot that ignites all blocks in a line.", Style.EMPTY),
-                        FormattedCharSequence.forward("While this is on cooldown, the blaze cannot attack.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.fire_wall_shot.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.fire_wall_shot.description2").getString(), Style.EMPTY)
                 ),
                 this
         );

@@ -15,6 +15,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -70,13 +71,25 @@ public class BlackstoneBridge extends AbstractBridge {
                 () -> BuildingClientEvents.setBuildingToPlace(BlackstoneBridge.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(BlackstoneBridge.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.blackstone_bridge.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A bridge built to traverse water or lava.", Style.EMPTY),
-                        FormattedCharSequence.forward("Must be connected to land or another bridge.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.blackstone_bridge.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.blackstone_bridge.description2").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Bridges can be repaired or attacked by anyone.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.blackstone_bridge.description3").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

@@ -18,6 +18,7 @@ import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -53,8 +54,8 @@ public class MountRavager extends Ability {
             () -> CursorClientEvents.setLeftClickAction(UnitAction.MOUNT_RAVAGER),
             () -> UnitClientEvents.sendUnitCommand(UnitAction.MOUNT_RAVAGER),
             List.of(
-                    FormattedCharSequence.forward("Mount Ravager (Right click to auto-find)", Style.EMPTY),
-                    FormattedCharSequence.forward("Mounted pillagers gain explosive arrows", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.mount_ravager").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.mount_ravager.effect").getString(), Style.EMPTY)
             ),
             this
         );

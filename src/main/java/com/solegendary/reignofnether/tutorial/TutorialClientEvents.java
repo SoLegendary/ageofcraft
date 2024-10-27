@@ -100,7 +100,12 @@ public class TutorialClientEvents {
                     msg(helpButtonText, true, CHAT);
             },
             () -> { },
-            List.of(FormattedCharSequence.forward("Tutorial Help", Style.EMPTY))
+            List.of(
+                    FormattedCharSequence.forward(
+                            Component.translatable("hud.reignofnether.tutorial_help").getString(),
+                            Style.EMPTY
+                    )
+            )
     );
 
     public static void loadStage(TutorialStage stage) {
