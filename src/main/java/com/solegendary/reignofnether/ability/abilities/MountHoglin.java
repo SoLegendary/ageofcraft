@@ -18,6 +18,7 @@ import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -53,7 +54,7 @@ public class MountHoglin extends Ability {
             () -> CursorClientEvents.setLeftClickAction(UnitAction.MOUNT_HOGLIN),
             () -> UnitClientEvents.sendUnitCommand(UnitAction.MOUNT_HOGLIN),
             List.of(
-                FormattedCharSequence.forward("Mount Hoglin (Right click to auto-find)", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.mount_hoglin").getString(), Style.EMPTY)
             ),
             this
         );

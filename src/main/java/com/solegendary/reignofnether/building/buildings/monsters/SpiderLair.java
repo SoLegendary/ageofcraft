@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.unit.units.monsters.PoisonSpiderProd;
 import com.solegendary.reignofnether.unit.units.monsters.SpiderProd;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -72,12 +73,21 @@ public class SpiderLair extends ProductionBuilding {
                 () -> BuildingClientEvents.setBuildingToPlace(SpiderLair.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(SpiderLair.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spider_lair.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A silken cave to grow spiders, both large and poisonous.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spider_lair.description1").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Requires a Laboratory.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.spider_lair.requirement").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

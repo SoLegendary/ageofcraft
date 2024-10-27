@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.hud;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.ability.Ability;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -28,7 +29,7 @@ public class AbilityButton extends Button {
         Runnable originalOnLeftClick = this.onLeftClick;
         this.onLeftClick = () -> {
             if (this.ability != null && (this.ability.getCooldown() > 0 && !this.ability.canBypassCooldown()))
-                HudClientEvents.showTemporaryMessage("This ability is still on cooldown");
+                HudClientEvents.showTemporaryMessage(Component.translatable("ability.cooldown.message").getString());
             else
                 originalOnLeftClick.run();
         };

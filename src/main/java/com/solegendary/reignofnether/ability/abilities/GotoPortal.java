@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -57,7 +58,7 @@ public class GotoPortal extends Ability {
                 () -> UnitClientEvents.sendUnitCommand(UnitAction.GOTO_PORTAL),
                 null,
                 List.of(
-                        FormattedCharSequence.forward("Go to connected portal", Style.EMPTY.withBold(true))
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.go_to_connected_portal").getString(), Style.EMPTY.withBold(true))
                 ),
                 this
         );

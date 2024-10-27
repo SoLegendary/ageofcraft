@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,11 +55,11 @@ public class ResearchHoglinCavalry extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchHoglinCavalry.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Unlocks the ability for headhunters to mount hoglins.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_hoglin_cavalry.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_hoglin_cavalry.description").getString(), Style.EMPTY)
             )
         );
     }

@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.research.researchItems.ResearchPoisonSpider
 import com.solegendary.reignofnether.research.researchItems.ResearchStrays;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -72,14 +73,14 @@ public class SpiderProd extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(SpiderProd.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedPopAndTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A giant spider that is nimble but frail.", Style.EMPTY),
-                FormattedCharSequence.forward("Can be upgraded to allow skeletons to ride them.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Spiders move much more slowly under sunlight.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.spider_prod.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedPopAndTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.spider_prod.description").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.spider_prod.skeleton_upgrade").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.spider_prod.sunlight_speed").getString(), Style.EMPTY)
             )
         );
     }

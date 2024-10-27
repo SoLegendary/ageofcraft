@@ -8,6 +8,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -75,13 +76,25 @@ public class DarkWatchtower extends Building implements GarrisonableBuilding {
             () -> BuildingClientEvents.setBuildingToPlace(DarkWatchtower.class),
             null,
             List.of(
-                    FormattedCharSequence.forward(DarkWatchtower.buildingName, Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dark_watchtower.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
                     ResourceCosts.getFormattedCost(cost),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("An ominous tower that can garrison units.", Style.EMPTY),
-                    FormattedCharSequence.forward("Garrisoned ranged units have increased range.", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dark_watchtower.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dark_watchtower.description2").getString(),
+                            Style.EMPTY
+                    ),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Can hold a maximum of " + MAX_OCCUPANTS + " units", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dark_watchtower.max_occupants", MAX_OCCUPANTS).getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.unit.UnitAction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -52,10 +53,10 @@ public class ConnectPortal extends Ability {
             () -> CursorClientEvents.setLeftClickAction(UnitAction.CONNECT_PORTAL),
             null,
             List.of(
-                    FormattedCharSequence.forward("Connect Portal", Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.connect_portal").getString(), Style.EMPTY.withBold(true)),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Connect to a transport portal you own anywhere else.", Style.EMPTY),
-                    FormattedCharSequence.forward("Overrides any existing connections on both sides.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.connect_portal.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.connect_portal.description2").getString(), Style.EMPTY)
             ),
             this
         );

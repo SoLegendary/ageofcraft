@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -75,13 +76,25 @@ public class Watchtower extends Building implements GarrisonableBuilding {
             () -> BuildingClientEvents.setBuildingToPlace(Watchtower.class),
             null,
             List.of(
-                    FormattedCharSequence.forward(Watchtower.buildingName, Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.watchtower.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
                     ResourceCosts.getFormattedCost(cost),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("A fortified tower that can garrison units.", Style.EMPTY),
-                    FormattedCharSequence.forward("Garrisoned ranged units have increased range.", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.watchtower.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.watchtower.description2").getString(),
+                            Style.EMPTY
+                    ),
                     FormattedCharSequence.forward("", Style.EMPTY),
-                    FormattedCharSequence.forward("Can hold a maximum of " + MAX_OCCUPANTS + " units", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.watchtower.capacity", MAX_OCCUPANTS).getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

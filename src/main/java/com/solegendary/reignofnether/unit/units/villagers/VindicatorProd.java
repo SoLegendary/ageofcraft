@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.researchItems.ResearchVindicatorAxes;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -44,11 +45,11 @@ public class VindicatorProd extends ProductionItem {
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
 
         List<FormattedCharSequence> tooltipLines = new ArrayList<>(List.of(
-                FormattedCharSequence.forward(VindicatorProd.itemName, Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.vindicator_prod.name").getString(), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 ResourceCosts.getFormattedPopAndTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A villager armed with an axe for melee combat.", Style.EMPTY)
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.vindicator_prod.description").getString(), Style.EMPTY)
         ));
         if (ResearchClient.hasResearch(ResearchVindicatorAxes.itemName)) {
             tooltipLines.add(FormattedCharSequence.forward("", Style.EMPTY));

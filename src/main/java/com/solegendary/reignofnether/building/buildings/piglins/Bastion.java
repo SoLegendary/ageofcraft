@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -91,15 +92,25 @@ public class Bastion extends ProductionBuilding implements GarrisonableBuilding 
                 () -> BuildingClientEvents.setBuildingToPlace(Bastion.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(Bastion.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.bastion.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A fortified barracks to house military piglins,", Style.EMPTY),
-                        FormattedCharSequence.forward("enabling them to be produced at military portals.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.bastion.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.bastion.description2").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Also garrisons up to 5 units.", Style.EMPTY),
-                        FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Requires a Basic Portal", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.bastion.description3").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

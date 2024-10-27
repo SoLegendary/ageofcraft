@@ -46,5 +46,461 @@
   "block.reignofnether.falling_mangrove_log": "Falling Mangrove Log",
   "block.reignofnether.falling_acacia_log": "Falling Acacia Log",
   "block.reignofnether.falling_warped_stem": "Falling Warped Stem",
-  "block.reignofnether.falling_crimson_stem": "Falling Crimson Stem"
+  "block.reignofnether.falling_crimson_stem": "Falling Crimson Stem",
+
+  "button.reignofnether.build_repair": "Build/Repair",
+  "button.reignofnether.attack": "Attack",
+  "button.reignofnether.stop": "Stop",
+  "button.reignofnether.hold": "Hold Position",
+  "button.reignofnether.move": "Move",
+  "button.reignofnether.garrison": "Gather",
+  "button.reignofnether.ungarrison": "Ungarrison",
+  "button.reignofnether.chat": "Chat (enter)",
+  "button.reignofnether.idle_workers": "Idle workers",
+  "button.reignofnether.cancel": "Cancel",
+  "button.reignofnether.select_all_military": "Select all military units",
+  "button.reignofnether.villager_faction": "Join the game as the Villager Faction.",
+  "button.reignofnether.villager_spawn": "Spawns 3 villagers at the target location.",
+  "button.reignofnether.monster_faction": "Join the game as the Monster Faction.",
+  "button.reignofnether.monster_spawn": "Spawns 3 zombie villagers at the target location.",
+  "button.reignofnether.piglin_faction": "Join the game as the Piglin Faction.",
+  "button.reignofnether.piglin_spawn": "Spawns 3 piglin grunts at the target location.",
+  "ability.cooldown.message": "This ability is still on cooldown",
+  "control.group.label": "Control Group %s (Right click to remove)",
+  "tooltip.reignofnether.drop_off_resources": "Drop off resources",
+  "tooltip.reignofnether.gather_resources": "Gather Resources (%s)",
+  "tooltip.reignofnether.change_resource_target": "Click to change target resource",
+  "tooltip.reignofnether.food": "Food",
+  "tooltip.reignofnether.wood": "Wood",
+  "tooltip.reignofnether.ore": "Ore",
+  "tooltip.reignofnether.population": "Population (Max: %s)",
+  "tooltip.reignofnether.total_workers": "Total workers: %s",
+  "tooltip.reignofnether.workers_on": "Workers on %s",
+
+  "building.reignofnether.dark_watchtower.name": "Dark Watchtower",
+  "building.reignofnether.dark_watchtower.description1": "An ominous tower that can garrison units.",
+  "building.reignofnether.dark_watchtower.description2": "Garrisoned ranged units have increased range.",
+  "building.reignofnether.dark_watchtower.max_occupants": "Can hold a maximum of %s units",
+
+  "building.reignofnether.dungeon.name": "Dungeon",
+  "building.reignofnether.dungeon.description1": "A fiery cage containing the power to create creepers.",
+  "building.reignofnether.dungeon.requirement": "Requires a Laboratory.",
+
+  "building.reignofnether.graveyard.name": "Graveyard",
+  "building.reignofnether.graveyard.description": "A field of the dead that can raise Zombies and Skeletons.",
+
+  "building.reignofnether.haunted_house.name": "Haunted House",
+  "building.reignofnether.haunted_house.description": "A spooky house that provides population supply.",
+
+  "building.reignofnether.laboratory.name": "Laboratory",
+  "building.reignofnether.laboratory.description1": "A sinister lab that can research new technologies",
+  "building.reignofnether.laboratory.description2": "based on the other buildings that have been built.",
+
+  "building.reignofnether.mausoleum.name": "Mausoleum",
+
+  "building.reignofnether.capitol": "Capitol",
+
+  "building.reignofnether.mausoleum.description1": "A tomb of the dead that produces zombie villagers.",
+  "building.reignofnether.mausoleum.description2": "Distorts time to midnight within a %s block radius.",
+  "building.reignofnether.mausoleum.limit": "You may only have one capitol building at any time.",
+
+  "building.reignofnether.pumpkin_farm.name": "Pumpkin Farm",
+  "building.reignofnether.pumpkin_farm.cost_suffix": "per crop planted",
+  "building.reignofnether.pumpkin_farm.description1": "A pumpkin field that can be harvested to collect food.",
+  "building.reignofnether.pumpkin_farm.description2": "Pumpkins don't need to be replanted but farms cost more up front.",
+
+  "building.reignofnether.sculk_catalyst.name": "Sculk Catalyst",
+  "building.reignofnether.sculk_catalyst.description1": "A pillar which spreads sculk when nearby units die.",
+  "building.reignofnether.sculk_catalyst.description2": "Distorts time to midnight within a %s block radius.",
+  "building.reignofnether.sculk_catalyst.description3": "Nearby sculk extends this range up to %s blocks and",
+  "building.reignofnether.sculk_catalyst.description4": "provides absorption health.",
+
+  "building.reignofnether.spider_lair.name": "Spider Lair",
+  "building.reignofnether.spider_lair.description1": "A silken cave to grow spiders, both large and poisonous.",
+  "building.reignofnether.spider_lair.requirement": "Requires a Laboratory.",
+
+  "building.reignofnether.spruce_bridge.name": "Spruce Bridge",
+  "building.reignofnether.spruce_bridge.description1": "A bridge built to traverse water.",
+  "building.reignofnether.spruce_bridge.description2": "Must be connected to land or another bridge.",
+  "building.reignofnether.spruce_bridge.description3": "Can be built over lava (but isn't fireproof!)",
+  "building.reignofnether.spruce_bridge.description4": "Bridges can be repaired or attacked by anyone.",
+
+  "building.reignofnether.spruce_stockpile.name": "Spruce Stockpile",
+  "building.reignofnether.spruce_stockpile.description": "Storage for units and players to drop off resources.",
+
+  "building.reignofnether.stronghold.name": "Stronghold",
+  "building.reignofnether.stronghold.description1": "A villainous stronghold that can produce wardens.",
+  "building.reignofnether.stronghold.description2": "Can garrison up to %s units.",
+  "building.reignofnether.stronghold.description3": "Distorts time to midnight within a %s block radius.",
+  "building.reignofnether.stronghold.requirement": "Requires a Graveyard, Spider Lair, and Dungeon.",
+
+  "building.reignofnether.bastion.name": "Bastion",
+  "building.reignofnether.bastion.description1": "A fortified barracks to house military piglins,",
+  "building.reignofnether.bastion.description2": "enabling them to be produced at military portals.",
+  "building.reignofnether.bastion.description3": "Also garrisons up to 5 units.",
+
+  "building.reignofnether.blackstone_bridge.name": "Blackstone Bridge",
+  "building.reignofnether.blackstone_bridge.description1": "A bridge built to traverse water or lava.",
+  "building.reignofnether.blackstone_bridge.description2": "Must be connected to land or another bridge.",
+  "building.reignofnether.blackstone_bridge.description3": "Bridges can be repaired or attacked by anyone.",
+
+  "building.reignofnether.central_portal.name": "Central Portal",
+  "building.reignofnether.central_portal.description1": "The primary portal to transport piglin grunts from the nether.",
+  "building.reignofnether.central_portal.limit": "You may only have one capitol building at any time.",
+
+  "building.reignofnether.flame_sanctuary.name": "Flame Sanctuary",
+  "building.reignofnether.flame_sanctuary.description1": "Scorching pillars of lava and brick to keep blazes,",
+  "building.reignofnether.flame_sanctuary.description2": "enabling their production at military portals.",
+  "building.reignofnether.flame_sanctuary.requirement": "Requires Hoglin Stables.",
+
+  "building.reignofnether.fortress.name": "Fortress",
+  "building.reignofnether.fortress.description1": "An imposing nether fortress that allows military portals",
+  "building.reignofnether.fortress.description2": "to produce ghasts and garrisons up to %s units.",
+  "building.reignofnether.fortress.requirement": "Requires a Flame Sanctuary and a Wither Shrine.",
+
+  "building.reignofnether.hoglin_stables.name": "Hoglin Stables",
+  "building.reignofnether.hoglin_stables.description1": "A shelter to keep Hoglins stabled in the overworld,",
+  "building.reignofnether.hoglin_stables.description2": "enabling their production at military portals.",
+  "building.reignofnether.hoglin_stables.requirement": "Requires a Basic Portal.",
+
+  "building.reignofnether.netherwart_farm.name": "Netherwart Farm",
+  "building.reignofnether.netherwart_farm.cost_suffix": "per crop planted",
+  "building.reignofnether.netherwart_farm.description1": "A field of netherwart that can be farmed to collect food.",
+  "building.reignofnether.netherwart_farm.description2": "Workers automatically use wood to replant while working.",
+
+  "building.reignofnether.portal.name": "Portal",
+  "building.reignofnether.portal.description1": "An obsidian portal used to spread nether blocks.",
+  "building.reignofnether.portal.description2": "Can be upgraded for various different functions.",
+  "building.reignofnether.portal.description3": "Can be built on overworld terrain, but at half speed.",
+
+  "building.reignofnether.wither_shrine.name": "Wither Shrine",
+  "building.reignofnether.wither_shrine.description1": "A dark shrine dedicated to the power of Withers.",
+  "building.reignofnether.wither_shrine.description2": "Enables wither skeleton production at military portals.",
+  "building.reignofnether.wither_shrine.requirement": "Requires a Bastion.",
+
+  "building.reignofnether.arcane_tower.name": "Arcane Tower",
+  "building.reignofnether.arcane_tower.description1": "A magical tower that is home to Witches and Evokers.",
+  "building.reignofnether.arcane_tower.requirement": "Requires a Barracks.",
+
+  "building.reignofnether.barracks.name": "Barracks",
+  "building.reignofnether.barracks.description1": "A training ground for Pillagers and Vindicators.",
+
+  "building.reignofnether.blacksmith.name": "Blacksmith",
+  "building.reignofnether.blacksmith.description1": "A smithy to forge military upgrades and iron golems.",
+  "building.reignofnether.blacksmith.requirement": "Requires a Barracks.",
+
+  "building.reignofnether.castle.name": "Castle",
+  "building.reignofnether.castle.description1": "A grand castle that can produce ravagers",
+  "building.reignofnether.castle.description2": "and garrison up to %s units.",
+  "building.reignofnether.castle.requirement": "Requires a Blacksmith, Arcane Tower and a Barracks.",
+
+  "building.reignofnether.iron_golem_building.name": "Iron Golem Building",
+  "building.reignofnether.iron_golem_building.description1": "An Iron Golem that can be built in the field.",
+  "building.reignofnether.iron_golem_building.requirement": "Requires research at a Blacksmith.",
+
+  "building.reignofnether.library.name": "Library",
+  "building.reignofnether.library.description1": "An enchanting table surrounded by pillars of books.",
+  "building.reignofnether.library.description2": "Used to research magic-related upgrades.",
+  "building.reignofnether.library.requirement": "Requires an Arcane Tower.",
+
+  "building.reignofnether.oak_stockpile.name": "Oak Stockpile",
+  "building.reignofnether.oak_stockpile.description1": "Storage for units and players to drop off resources.",
+
+  "building.reignofnether.town_centre.name": "Town Centre",
+  "building.reignofnether.town_centre.description1": "A gazebo at the centre of your village that produces villagers.",
+  "building.reignofnether.town_centre.limit": "You may only have one capitol building at any time.",
+
+  "building.reignofnether.villager_house.name": "Villager House",
+  "building.reignofnether.villager_house.description1": "A simple house that provides population supply.",
+
+  "building.reignofnether.watchtower.name": "Watchtower",
+  "building.reignofnether.watchtower.description1": "A fortified tower that can garrison units.",
+  "building.reignofnether.watchtower.description2": "Garrisoned ranged units have increased range.",
+  "building.reignofnether.watchtower.capacity": "Can hold a maximum of %s units.",
+
+  "building.reignofnether.wheat_farm.name": "Wheat Farm",
+  "building.reignofnether.wheat_farm.cost_suffix": "per crop planted",
+  "building.reignofnether.wheat_farm.description1": "A wheat field that can be tilled to collect food.",
+  "building.reignofnether.wheat_farm.description2": "Workers automatically use wood to replant seeds while working.",
+
+  "hud.reignofnether.map.close": "Close",
+  "hud.reignofnether.map.open_large": "Open large map",
+
+  "hud.reignofnether.time_until": "%s until %s",
+  "hud.reignofnether.game_time": "Game time: %s",
+  "hud.reignofnether.time": "Time: %s",
+  "hud.reignofnether.night_circles": "Night circles: %s",
+  "hud.reignofnether.time_distorted": "Time is distorted to midnight",
+  "hud.reignofnether.real_time": "Real time: %s",
+
+  "hud.reignofnether.tutorial_help": "Tutorial Help",
+
+  "hud.reignofnether.creeper_prod.name": "Creeper",
+  "hud.reignofnether.creeper_prod.description": "An explosive monster that can blow up units and buildings.",
+  "hud.reignofnether.creeper_prod.capitol_damage": "Deals less damage to capitol buildings.",
+  "hud.reignofnether.creeper_prod.sunlight_speed": "Creepers move much more slowly under sunlight.",
+
+  "hud.reignofnether.drowned_prod.name": "Drowned",
+  "hud.reignofnether.drowned_prod.description1": "An infectious variant of the zombie which zombifies",
+  "hud.reignofnether.drowned_prod.description2": "villagers and piglins after killing them.",
+  "hud.reignofnether.drowned_prod.sunlight_burn": "Drowned will burn under sunlight.",
+  "hud.reignofnether.drowned_prod.requires_upgrade": "Requires an upgrade at the Laboratory.",
+
+  "hud.reignofnether.husk_prod.name": "Husk",
+  "hud.reignofnether.husk_prod.description": "A hardy variant of the zombie with tougher skin.",
+  "hud.reignofnether.husk_prod.sunlight_resistant": "Husks DO NOT burn under sunlight.",
+  "hud.reignofnether.husk_prod.requires_upgrade": "Requires an upgrade at the Laboratory.",
+
+  "hud.reignofnether.poison_spider_prod.name": "Poisonous Spider",
+  "hud.reignofnether.poison_spider_prod.description": "A spider fanged with deadly poison.",
+  "hud.reignofnether.poison_spider_prod.sunlight_speed": "Spiders move much more slowly under sunlight.",
+  "hud.reignofnether.poison_spider_prod.requires_upgrade": "Requires an upgrade at the Laboratory.",
+
+  "hud.reignofnether.skeleton_prod.name": "Skeleton",
+  "hud.reignofnether.skeleton_prod.description": "An undead soldier with a bow and arrows.",
+  "hud.reignofnether.skeleton_prod.sunlight_burn": "Skeletons will burn under sunlight.",
+
+  "hud.reignofnether.spider_prod.name": "Spider",
+  "hud.reignofnether.spider_prod.description": "A giant spider that is nimble but frail.",
+  "hud.reignofnether.spider_prod.skeleton_upgrade": "Can be upgraded to allow skeletons to ride them.",
+  "hud.reignofnether.spider_prod.sunlight_speed": "Spiders move much more slowly under sunlight.",
+
+  "hud.reignofnether.stray_prod.name": "Stray",
+  "hud.reignofnether.stray_prod.description": "An chilling variant of the skeleton that fires slowing arrows.",
+  "hud.reignofnether.stray_prod.sunlight_burn": "Strays will burn under sunlight.",
+  "hud.reignofnether.stray_prod.requires_upgrade": "Requires an upgrade at the Laboratory.",
+
+  "hud.reignofnether.warden_prod.name": "Warden",
+  "hud.reignofnether.warden_prod.description": "A powerful but blind monster that can fire sonic booms.",
+
+  "hud.reignofnether.zombie_prod.name": "Zombie",
+  "hud.reignofnether.zombie_prod.description": "An undead monster with a basic melee attack.",
+  "hud.reignofnether.zombie_prod.sunlight_burn": "Zombies will burn under sunlight.",
+
+  "hud.reignofnether.zombie_villager_prod.name": "Zombie Villager",
+  "hud.reignofnether.zombie_villager_prod.description1": "An undead worker that can construct and",
+  "hud.reignofnether.zombie_villager_prod.description2": "repair buildings and gather resources.",
+  "hud.reignofnether.zombie_villager_prod.sunlight_resistant": "Zombie villagers DO NOT burn under sunlight.",
+
+  "hud.reignofnether.blaze_prod.name": "Blaze",
+  "hud.reignofnether.blaze_prod.description1": "A fiery elemental that shoots fireballs from afar.",
+  "hud.reignofnether.blaze_prod.description2": "Attacks are fast and ignite enemies but inaccurate.",
+  "hud.reignofnether.blaze_prod.requires_sanctuary": "Requires a Flame Sanctuary.",
+
+  "hud.reignofnether.brute_prod.name": "Brute",
+  "hud.reignofnether.brute_prod.description": "A piglin armed with a sword for combat.",
+
+  "hud.reignofnether.ghast_prod.name": "Ghast",
+  "hud.reignofnether.ghast_prod.description1": "A massive flying creature that fires explosive fireballs",
+  "hud.reignofnether.ghast_prod.description2": "from a great distance to siege units and buildings.",
+  "hud.reignofnether.ghast_prod.description3": "Slow and fragile, but can only be targeted by ranged units.",
+  "hud.reignofnether.ghast_prod.requires_fortress": "Requires a Fortress.",
+
+  "hud.reignofnether.grunt_prod.name": "Grunt",
+  "hud.reignofnether.grunt_prod.description1": "A piglin worker that can construct and",
+  "hud.reignofnether.grunt_prod.description2": "repair buildings and gather resources.",
+
+  "hud.reignofnether.headhunter_prod.name": "Headhunter",
+  "hud.reignofnether.headhunter_prod.description": "A piglin that throws tridents in battle.",
+  "hud.reignofnether.headhunter_prod.requires_bastion": "Requires a Bastion.",
+
+  "hud.reignofnether.hoglin_prod.name": "Hoglin",
+  "hud.reignofnether.hoglin_prod.description1": "A beast trained for war. Deals 50% more damage to buildings.",
+  "hud.reignofnether.hoglin_prod.description2": "Can be upgraded to be mountable by Headhunters.",
+  "hud.reignofnether.hoglin_prod.requires_stables": "Requires Hoglin Stables.",
+
+  "hud.reignofnether.wither_skeleton_prod.name": "Wither Skeleton",
+  "hud.reignofnether.wither_skeleton_prod.description1": "A charcoal black skeleton that afflicts",
+  "hud.reignofnether.wither_skeleton_prod.description2": "wither on enemies and deals bonus damage",
+  "hud.reignofnether.wither_skeleton_prod.description3": "(up to double) to enemies near death.",
+  "hud.reignofnether.wither_skeleton_prod.requires_shrine": "Requires a Wither Shrine.",
+
+  "hud.reignofnether.evoker_prod.name": "Evoker",
+  "hud.reignofnether.evoker_prod.description": "A learned wizard that can cast combat spells.",
+  "hud.reignofnether.evoker_prod.requires_library": "Requires a Library.",
+
+  "hud.reignofnether.iron_golem_prod.name": "Iron Golem",
+  "hud.reignofnether.iron_golem_prod.description1": "A slow hulking golem of metal with a powerful melee.",
+  "hud.reignofnether.iron_golem_prod.description2": "attack that deals double damage to buildings.",
+
+  "hud.reignofnether.pillager_prod.name": "Pillager",
+  "hud.reignofnether.pillager_prod.description": "A villager armed with a crossbow for ranged combat.",
+
+  "hud.reignofnether.ravager_prod.name": "Ravager",
+  "hud.reignofnether.ravager_prod.description1": "An enormous beast that can smash through hordes of enemies.",
+  "hud.reignofnether.ravager_prod.description2": "They can roar to knockback enemies and be mounted by pillagers.",
+
+  "hud.reignofnether.villager_prod.name": "Villager",
+  "hud.reignofnether.villager_prod.description1": "A worker that can construct and repair",
+  "hud.reignofnether.villager_prod.description2": "buildings and gather resources.",
+
+  "hud.reignofnether.vindicator_prod.name": "Vindicator",
+  "hud.reignofnether.vindicator_prod.description": "A villager armed with an axe for melee combat.",
+
+  "hud.reignofnether.witch_prod.name": "Witch",
+  "hud.reignofnether.witch_prod.description": "A devious hag who can heal and harm with potions.",
+
+  "ability.reignofnether.attack_ground": "Attack Ground",
+  "ability.reignofnether.call_lightning": "Call Lightning",
+  "ability.reignofnether.call_lightning.description1": "Summon a bolt of lightning at the target location.",
+  "ability.reignofnether.call_lightning.description2": "Can be used to charge creepers and damage enemies.",
+  "ability.reignofnether.summon_vexes": "Summon Vexes",
+  "ability.reignofnether.summon_vexes.description1": "After a long delay, summon {0} flying vexes that attack",
+  "ability.reignofnether.summon_vexes.description2": "the evoker's target. Vexes start to die off after {0} seconds.",
+  "ability.reignofnether.connect_portal": "Connect Portal",
+  "ability.reignofnether.connect_portal.description1": "Connect to a transport portal you own anywhere else.",
+  "ability.reignofnether.connect_portal.description2": "Overrides any existing connections on both sides.",
+  "ability.reignofnether.sever_connection": "Sever Connection",
+  "ability.reignofnether.dismount": "Dismount",
+  "ability.reignofnether.eject": "Eject",
+  "ability.reignofnether.explode": "Explode",
+  "ability.reignofnether.fire_wall_shot": "Fire Wall Shot",
+  "ability.reignofnether.fire_wall_shot.description1": "Fire an accurate shot that ignites all blocks in a line.",
+  "ability.reignofnether.fire_wall_shot.description2": "While this is on cooldown, the blaze cannot attack.",
+  "ability.reignofnether.go_to_connected_portal": "Go to connected portal",
+  "ability.reignofnether.mount_hoglin": "Mount Hoglin (Right click to auto-find)",
+  "ability.reignofnether.mount_ravager": "Mount Ravager (Right click to auto-find)",
+  "ability.reignofnether.mount_ravager.effect": "Mounted pillagers gain explosive arrows",
+  "ability.reignofnether.mount_spider": "Mount Spider (Right click to auto-find)",
+  "ability.reignofnether.promote_illager": "Promote Illager",
+  "ability.reignofnether.promote_illager.description1": "Promote an illager to a captain, giving it a banner that gives",
+  "ability.reignofnether.promote_illager.description2": "a speed buff to all friendly units in a {0} block radius.",
+  "ability.reignofnether.promote_illager.description3": "You may only have one captain at a time per upgraded castle.",
+  "ability.reignofnether.roar": "Roar",
+  "ability.reignofnether.roar.description1": "Emit a deafening roar, knocking away, damaging",
+  "ability.reignofnether.roar.description2": "and briefly slowing down all nearby enemies.",
+  "ability.reignofnether.evoker_fangs_circular": "Evoker Fangs (Circular)",
+  "ability.reignofnether.evoker_fangs_circular.description1": "Have this evoker summon a circle of snapping",
+  "ability.reignofnether.evoker_fangs_circular.description2": "fangs around itself when attacking.",
+  "ability.reignofnether.evoker_fangs_line": "Evoker Fangs (Line)",
+  "ability.reignofnether.evoker_fangs_line.description1": "Have this evoker summon a long line of snapping",
+  "ability.reignofnether.evoker_fangs_line.description2": "fangs around the caster when attacking.",
+  "ability.reignofnether.sonic_boom": "Sonic Boom",
+  "ability.reignofnether.sonic_boom.description1": "After a short delay, fire a targeted wave of sound at the",
+  "ability.reignofnether.sonic_boom.description2": "target, dealing heavy damage and knocking it far away.",
+  "ability.reignofnether.teleport": "Teleport",
+  "ability.reignofnether.teleport.description": "Immediately teleport towards a location",
+  "ability.reignofnether.potion_harming": "Harming Potion",
+  "ability.reignofnether.potion_harming.description": "Throw a potion that deals instant damage to units.",
+  "ability.reignofnether.lingering_harming_potion": "Lingering Harming Potion",
+  "ability.reignofnether.lingering_harming_potion.description": "Throw a potion that leaves a cloud of deadly gas.",
+  "ability.reignofnether.lingering_regen_potion": "Lingering Regen Potion",
+  "ability.reignofnether.lingering_regen_potion.description": "Throw a potion that leaves a cloud of healing vapours.",
+  "ability.reignofnether.regen_potion": "Regen Potion",
+  "ability.reignofnether.regen_potion.description": "Throw a potion that restores health to units over time.",
+  "ability.reignofnether.shield_stance": "Shield Stance",
+  "ability.reignofnether.shield_stance.description1": "Raise or lower a shield - reducing projectile",
+  "ability.reignofnether.shield_stance.description2": "damage taken by 67% and movement speed by 50%.",
+
+  "attackwarning.reignofnether.go_to_alert": "Go to alert",
+  "attackwarning.reignofnether.go_to_alert.ignore_instruction": "(Right click to ignore)",
+
+  "researchitems.reignofnether.research_advanced_portals.name": "Advanced Portals",
+  "researchitems.reignofnether.research_advanced_portals.description1": "Allows portals to be constructed on overworld terrain at full speed",
+  "researchitems.reignofnether.research_advanced_portals.description2": "and enables them to be upgraded into transport portals, which can instantly teleport units between them.",
+  "researchitems.reignofnether.research_advanced_portals.description3": "Provides strategic movement capabilities across the map.",
+
+  "researchitems.reignofnether.research_drowned.name": "Drowned Conversion",
+  "researchitems.reignofnether.research_drowned.description1": "Transforms all of your zombies into drowned, which",
+  "researchitems.reignofnether.research_drowned.description2": "zombify Villager and Piglin units after killing them.",
+  "researchitems.reignofnether.research_drowned.requires_graveyard": "Requires a Graveyard.",
+
+  "researchitems.reignofnether.research_evoker_vexes.name": "Evoker's Vexes",
+  "researchitems.reignofnether.research_evoker_vexes.description1": "Unlocks the ability for evokers to summon vexes.",
+  "researchitems.reignofnether.research_evoker_vexes.requires_evokers": "Requires evokers to have been unlocked.",
+
+  "researchitems.reignofnether.research_lab_lightning_rod.name": "Lab Lightning Rod",
+  "researchitems.reignofnether.research_lab_lightning_rod.description1": "Adds a lightning rod to this lab that can be activated",
+  "researchitems.reignofnether.research_lab_lightning_rod.description2": "to call lightning to charge creepers and damage enemies.",
+  "researchitems.reignofnether.research_lab_lightning_rod.requires_dungeon": "Requires a Dungeon.",
+
+  "researchitems.reignofnether.research_poison_spiders.name": "Poison Spiders",
+  "researchitems.reignofnether.research_poison_spiders.description1": "Transforms your Spiders into Cave Spiders, granting them",
+  "researchitems.reignofnether.research_poison_spiders.description2": "poisonous attacks.",
+  "researchitems.reignofnether.research_poison_spiders.requires_spider_lair": "Requires a Spider Lair.",
+
+  "researchitems.reignofnether.research_portal_for_transport.name": "Transport Portal",
+  "researchitems.reignofnether.research_portal_for_transport.description1": "Converts into a transport portal, allowing for instant",
+  "researchitems.reignofnether.research_portal_for_transport.description2": "teleportation of units to another linked transport portal.",
+  "researchitems.reignofnether.research_portal_for_transport.requires_fortress": "Requires research at a Fortress.",
+
+  "researchitems.reignofnether.research_sculk_amplifiers.name": "Sculk Amplifiers",
+  "researchitems.reignofnether.research_sculk_amplifiers.description1": "Wardens can Sonic Boom Sculk Calaysts to split the boom onto",
+  "researchitems.reignofnether.research_sculk_amplifiers.description2": "3 random nearby enemies within a range of SPLIT_BOOM_RANGE.",
+  "researchitems.reignofnether.research_sculk_amplifiers.requires_stronghold": "Requires a Stronghold.",
+
+  "researchitems.reignofnether.research_silverfish.name": "Silverfish Defense",
+  "researchitems.reignofnether.research_silverfish.description1": "Gives your buildings a {0}% chance to spawn a silverfish",
+  "researchitems.reignofnether.research_silverfish.description2": "whenever a block is destroyed.Silverfish have",
+  "researchitems.reignofnether.research_silverfish.description3": " limited lifespans.",
+  "researchitems.reignofnether.research_silverfish.requires_stronghold": "Requires a Stronghold.",
+
+  "researchitems.reignofnether.research_spider_jockeys.name": "Spider Jockeys",
+  "researchitems.reignofnether.research_spider_jockeys.description": "Unlocks the ability for skeletons to mount spiders.",
+  "researchitems.reignofnether.research_spider_jockeys.requires_spider_lair": "Requires a Spider Lair.",
+
+  "researchitems.reignofnether.research_strays.name": "Stray Upgrade",
+  "researchitems.reignofnether.research_strays.description1": "Transforms all of your skeletons into strays",
+  "researchitems.reignofnether.research_strays.description2": "which fire slowing arrows.",
+  "researchitems.reignofnether.research_strays.requires_graveyard": "Requires a Graveyard.",
+
+  "researchitems.reignofnether.research_blaze_firewall.name": "Blaze Firewall",
+  "researchitems.reignofnether.research_blaze_firewall.description1": "Allows Blazes to fire a single shot that ignites all",
+  "researchitems.reignofnether.research_blaze_firewall.description2": "blocks in a line, but disables their attacks temporarily.",
+
+  "researchitems.reignofnether.research_brute_shields.name": "Brute Shields",
+  "researchitems.reignofnether.research_brute_shields.description1": "Allows Brutes to raise a shield to reduce projectile damage taken by 67%",
+  "researchitems.reignofnether.research_brute_shields.description2": "and movement speed by 50%.",
+
+  "researchitems.reignofnether.research_castle_flag.name": "Castle Flag",
+  "researchitems.reignofnether.research_castle_flag.description1": "Upgrades this castle to be able to promote an illager unit to a captain,",
+  "researchitems.reignofnether.research_castle_flag.description2": "providing a speed aura to friendly units.",
+  "researchitems.reignofnether.research_castle_flag.description3": "Each upgraded castle may only support one captain at a time.",
+
+  "researchitems.reignofnether.research_fire_resistance.name": "Fire Resistance",
+  "researchitems.reignofnether.research_fire_resistance.description1": "Your units become immune to fire tick damage and magma.",
+  "researchitems.reignofnether.research_fire_resistance.description2": "Standing directly in fire or lava still causes damage.",
+
+  "researchitems.reignofnether.research_golem_smithing.name": "Golem Smithing",
+  "researchitems.reignofnether.research_golem_smithing.description": "Allows villagers to construct iron golems.",
+
+  "researchitems.reignofnether.research_heavy_tridents.name": "Heavy Tridents",
+  "researchitems.reignofnether.research_heavy_tridents.description": "Headhunters' tridents knock enemies back on hit.",
+
+  "researchitems.reignofnether.research_hoglin_cavalry.name": "Hoglin Cavalry",
+  "researchitems.reignofnether.research_hoglin_cavalry.description": "Unlocks the ability for headhunters to mount hoglins.",
+
+  "researchitems.reignofnether.research_lingering_potions.name": "Lingering Potions",
+  "researchitems.reignofnether.research_lingering_potions.description": "Doubles the duration of witches' potion clouds.",
+
+  "researchitems.reignofnether.research_pillager_crossbows.name": "Pillager Crossbows",
+  "researchitems.reignofnether.research_pillager_crossbows.description": "Enchants the crossbows of all pillagers with multishot.",
+
+  "researchitems.reignofnether.research_portal_for_civilian.name": "Civilian Portal",
+  "researchitems.reignofnether.research_portal_for_civilian.description1": "Converts into a civilian portal, supplying 15 population",
+  "researchitems.reignofnether.research_portal_for_civilian.description2": "and allowing workers to drop resources off here.",
+
+  "researchitems.reignofnether.research_portal_for_military.name": "Military Portal",
+  "researchitems.reignofnether.research_portal_for_military.description1": "Converts into a military portal, allowing production",
+  "researchitems.reignofnether.research_portal_for_military.description2": "of military units based on the buildings you own.",
+
+  "researchitems.reignofnether.research_ravager_cavalry.name": "Ravager Cavalry",
+  "researchitems.reignofnether.research_ravager_cavalry.description1": "Unlocks the ability for pillagers to mount ravagers,",
+  "researchitems.reignofnether.research_ravager_cavalry.description2": "gaining explosive arrows that shoot upwards like mortar.",
+
+  "researchitems.reignofnether.research_resource_capacity.name": "Resource Capacity",
+  "researchitems.reignofnether.research_resource_capacity.description1": "Raises the resource capacity of workers from 100 to 200.",
+  "researchitems.reignofnether.research_resource_capacity.description2": "Workers still auto-return resources when holding above 50.",
+
+  "researchitems.reignofnether.research_vindicator_axes.name": "Vindicator Axes",
+  "researchitems.reignofnether.research_vindicator_axes.description": "Upgrades the axes of all vindicators to diamond (+2 damage).",
+
+  "researchitems.reignofnether.research_wither_clouds.name": "Wither Clouds",
+  "researchitems.reignofnether.research_wither_clouds.description1": "Enemies killed by wither skeletons leave",
+  "researchitems.reignofnether.research_wither_clouds.description2": "behind a deadly cloud of wither on death.",
+
+  "researchitems.reignofnether.research_husks.name": "Husk Conversion",
+  "researchitems.reignofnether.research_husks.description1": "Transforms all of your zombies into husks, granting them",
+  "researchitems.reignofnether.research_husks.description2": "+{0} health and immunity to sunlight.",
+  "researchitems.reignofnether.research_husks.requires_graveyard": "Requires a Graveyard."
 }

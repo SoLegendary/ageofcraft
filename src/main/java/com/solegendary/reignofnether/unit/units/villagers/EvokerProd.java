@@ -8,6 +8,7 @@ import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -49,13 +50,13 @@ public class EvokerProd extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(EvokerProd.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedPopAndTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A learned wizard that can cast combat spells.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Library.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.evoker_prod.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedPopAndTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.evoker_prod.description").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("hud.reignofnether.evoker_prod.requires_library").getString(), Style.EMPTY)
             )
         );
     }

@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -56,13 +57,12 @@ public class ResearchSpiderJockeys extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchSpiderJockeys.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Unlocks the ability for skeletons to mount spiders.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Spider Lair.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_spider_jockeys.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_spider_jockeys.description").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_spider_jockeys.requires_spider_lair").getString(), Style.EMPTY)
             )
         );
     }

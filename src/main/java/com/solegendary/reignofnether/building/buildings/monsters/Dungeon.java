@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperProd;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -75,12 +76,21 @@ public class Dungeon extends ProductionBuilding {
             () -> BuildingClientEvents.setBuildingToPlace(Dungeon.class),
             null,
             List.of(
-                FormattedCharSequence.forward(Dungeon.buildingName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A fiery cage containing the power to create creepers.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Laboratory.", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dungeon.name").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
+                    ResourceCosts.getFormattedCost(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dungeon.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.dungeon.requirement").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

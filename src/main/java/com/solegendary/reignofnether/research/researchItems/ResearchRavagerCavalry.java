@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,12 +55,12 @@ public class ResearchRavagerCavalry extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchRavagerCavalry.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Unlocks the ability for pillagers to mount ravagers,", Style.EMPTY),
-                FormattedCharSequence.forward("gaining explosive arrows that shoot upwards like mortar.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_ravager_cavalry.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_ravager_cavalry.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_ravager_cavalry.description2").getString(), Style.EMPTY)
             )
         );
     }

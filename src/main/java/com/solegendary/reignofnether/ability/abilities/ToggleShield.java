@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -52,10 +53,10 @@ public class ToggleShield extends Ability {
                 () -> UnitClientEvents.sendUnitCommand(UnitAction.TOGGLE_SHIELD),
                 null,
                 List.of(
-                        FormattedCharSequence.forward("Shield Stance", Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.shield_stance").getString(), Style.EMPTY),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Raise or lower a shield - reducing projectile ", Style.EMPTY),
-                        FormattedCharSequence.forward("damage taken by 67% and movement speed by 50%.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.shield_stance.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.shield_stance.description2").getString(), Style.EMPTY)
                 ),
                 this
         );

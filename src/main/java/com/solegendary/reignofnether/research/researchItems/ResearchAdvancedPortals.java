@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,13 +55,13 @@ public class ResearchAdvancedPortals extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchAdvancedPortals.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_advanced_portals.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Allows portals to be constructed on overworld terrain at full ", Style.EMPTY),
-                        FormattedCharSequence.forward("speed and enables them to be upgraded into transport portals, ", Style.EMPTY),
-                        FormattedCharSequence.forward("which can instantly teleport units between them.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_advanced_portals.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_advanced_portals.description2").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_advanced_portals.description3").getString(), Style.EMPTY)
                 )
         );
     }

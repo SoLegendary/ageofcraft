@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -43,15 +44,15 @@ public class GhastProd extends ProductionItem {
 
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
         List<FormattedCharSequence> tooltipLines = new ArrayList<>(List.of(
-                FormattedCharSequence.forward(GhastProd.itemName, Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.ghast_prod.name").getString(), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 ResourceCosts.getFormattedPopAndTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A massive flying creature that fires explosive fireballs", Style.EMPTY),
-                FormattedCharSequence.forward("from a great distance to siege units and buildings.", Style.EMPTY),
-                FormattedCharSequence.forward("Slow and fragile, but can only be targeted by ranged units.", Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.ghast_prod.description1").getString(), Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.ghast_prod.description2").getString(), Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.ghast_prod.description3").getString(), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Fortress.", Style.EMPTY)
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.ghast_prod.requires_fortress").getString(), Style.EMPTY)
         ));
 
         return new Button(

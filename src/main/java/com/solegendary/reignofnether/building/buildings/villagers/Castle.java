@@ -14,6 +14,7 @@ import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerProd;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -100,13 +101,25 @@ public class Castle extends ProductionBuilding implements GarrisonableBuilding {
                 () -> BuildingClientEvents.setBuildingToPlace(Castle.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(Castle.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.castle.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A grand castle that can produce ravagers ", Style.EMPTY),
-                        FormattedCharSequence.forward("and garrison up to " + MAX_OCCUPANTS + " units.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.castle.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.castle.description2", MAX_OCCUPANTS).getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Requires a Blacksmith, Arcane Tower and a Barracks.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.castle.requirement").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

@@ -19,6 +19,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -233,13 +234,25 @@ public class Portal extends ProductionBuilding implements NetherConvertingBuildi
                 () -> BuildingClientEvents.setBuildingToPlace(Portal.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(Portal.buildingName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.portal.name").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("An obsidian portal used to spread nether blocks.", Style.EMPTY),
-                        FormattedCharSequence.forward("Can be upgraded for various different functions.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.portal.description1").getString(),
+                                Style.EMPTY
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.portal.description2").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Can be built on overworld terrain, but at half speed.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.portal.description3").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

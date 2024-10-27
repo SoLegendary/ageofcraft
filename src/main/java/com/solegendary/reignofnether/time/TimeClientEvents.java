@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
@@ -121,27 +122,47 @@ public class TimeClientEvents {
             String timeStr = get12HourTimeStr(serverTime) + dayStr;
 
             FormattedCharSequence timeUntilStr = FormattedCharSequence.forward(
-                    getTimeUntilStr(serverTime, isDay ? DUSK : DAWN) + " until " + (isDay ? "night" : "day"), Style.EMPTY);
+                    Component.translatable("hud.reignofnether.time_until", getTimeUntilStr(serverTime, isDay ? DUSK : DAWN), dayStr).getString(),
+                    Style.EMPTY
+            );
 
             FormattedCharSequence gameLengthStr = FormattedCharSequence.forward("", Style.EMPTY);
 
             if (PlayerClientEvents.isRTSPlayer)
-                gameLengthStr = FormattedCharSequence.forward("Game time: " + getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks), Style.EMPTY);
+                gameLengthStr = FormattedCharSequence.forward(
+                        Component.translatable("hud.reignofnether.game_time", getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks)).getString(),
+                        Style.EMPTY
+                );
 
             List<FormattedCharSequence> tooltip = List.of(
-                    FormattedCharSequence.forward("Time: " + timeStr, Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("hud.reignofnether.time", timeStr).getString(),
+                            Style.EMPTY
+                    ),
                     timeUntilStr,
-                    FormattedCharSequence.forward("" + timeStr, Style.EMPTY),
+                    FormattedCharSequence.forward(timeStr, Style.EMPTY),
                     gameLengthStr,
-                    FormattedCharSequence.forward("Night circles: " + nightCircleMode.name(), Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("hud.reignofnether.night_circles", nightCircleMode.name()).getString(),
+                            Style.EMPTY
+                    )
             );
             if (targetClientTime != serverTime)
                 tooltip = List.of(
-                        FormattedCharSequence.forward("Time is distorted to midnight", Style.EMPTY.withBold(true)),
-                        FormattedCharSequence.forward("Real time: " + timeStr, Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("hud.reignofnether.time_distorted").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
+                        FormattedCharSequence.forward(
+                                Component.translatable("hud.reignofnether.real_time", timeStr).getString(),
+                                Style.EMPTY
+                        ),
                         timeUntilStr,
                         gameLengthStr,
-                        FormattedCharSequence.forward("Night circles: " + nightCircleMode.name().replace("_"," "), Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("hud.reignofnether.night_circles", nightCircleMode.name().replace("_"," ")).getString(),
+                                Style.EMPTY
+                        )
                 );
 
             MyRenderer.renderTooltip(

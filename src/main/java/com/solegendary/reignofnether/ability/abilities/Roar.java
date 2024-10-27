@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -49,11 +50,11 @@ public class Roar extends Ability {
             () -> UnitClientEvents.sendUnitCommand(UnitAction.ROAR),
             null,
             List.of(
-                FormattedCharSequence.forward("Roar", Style.EMPTY),
-                FormattedCharSequence.forward("\uE006  " + RavagerUnit.ROAR_DAMAGE + "   " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005   " + RavagerUnit.ROAR_RANGE, MyRenderer.iconStyle),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Emit a deafening roar, knocking away, damaging", Style.EMPTY),
-                FormattedCharSequence.forward("and briefly slowing down all nearby enemies. ", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.roar").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward("\uE006  " + RavagerUnit.ROAR_DAMAGE + "   " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005   " + RavagerUnit.ROAR_RANGE, MyRenderer.iconStyle),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.roar.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.roar.description2").getString(), Style.EMPTY)
             ),
             this
         );

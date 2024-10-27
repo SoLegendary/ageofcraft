@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -60,12 +61,12 @@ public class ResearchBruteShields extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchBruteShields.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_brute_shields.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Allows Brutes to raise a shield to reduce projectile ", Style.EMPTY),
-                        FormattedCharSequence.forward("damage taken by 67% and movement speed by 50%.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable(" ").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_brute_shields.description2").getString(), Style.EMPTY)
                 )
         );
     }

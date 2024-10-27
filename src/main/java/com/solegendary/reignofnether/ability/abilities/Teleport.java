@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.unit.units.monsters.EndermanUnit;
 import com.solegendary.reignofnether.util.MyMath;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,9 +51,9 @@ public class Teleport extends Ability {
                 () -> CursorClientEvents.setLeftClickAction(UnitAction.TELEPORT),
                 null,
                 List.of(
-                        FormattedCharSequence.forward("Teleport", Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.teleport").getString(), Style.EMPTY.withBold(true)),
                         FormattedCharSequence.forward("\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + RANGE, MyRenderer.iconStyle),
-                        FormattedCharSequence.forward("Immediately teleport towards a location", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("ability.reignofnether.teleport.description").getString(), Style.EMPTY)
                 ),
                 this
         );

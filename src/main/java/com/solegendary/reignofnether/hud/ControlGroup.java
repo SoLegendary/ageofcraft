@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -154,7 +155,7 @@ public class ControlGroup {
             () -> true,
             this::loadToSelected,
             this::clearAll,
-            List.of(FormattedCharSequence.forward("Control Group " + keybinding.buttonLabel + " (Right click to remove)", Style.EMPTY))
+                List.of(FormattedCharSequence.forward(Component.translatable("control.group.label", keybinding.buttonLabel).getString(), Style.EMPTY))
         );
     }
 }

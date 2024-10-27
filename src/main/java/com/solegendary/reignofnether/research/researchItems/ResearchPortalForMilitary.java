@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -55,12 +56,12 @@ public class ResearchPortalForMilitary extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchPortalForMilitary.itemName, Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Convert into a military portal, allowing production", Style.EMPTY),
-                FormattedCharSequence.forward("of military units based on the buildings you own.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_portal_for_military.name").getString(), Style.EMPTY.withBold(true)),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedTime(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_portal_for_military.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_portal_for_military.description2").getString(), Style.EMPTY)
             )
         );
     }

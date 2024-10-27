@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -43,15 +44,15 @@ public class WitherSkeletonProd extends ProductionItem {
 
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
         List<FormattedCharSequence> tooltipLines = new ArrayList<>(List.of(
-                FormattedCharSequence.forward(WitherSkeletonProd.itemName, Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.wither_skeleton_prod.name").getString(), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 ResourceCosts.getFormattedPopAndTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A charcoal black skeleton that afflicts", Style.EMPTY),
-                FormattedCharSequence.forward("wither on enemies and deals bonus damage", Style.EMPTY),
-                FormattedCharSequence.forward("(up to double) to enemies near death.", Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.wither_skeleton_prod.description1").getString(), Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.wither_skeleton_prod.description2").getString(), Style.EMPTY),
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.wither_skeleton_prod.description3").getString(), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Wither Shrine.", Style.EMPTY)
+                FormattedCharSequence.forward(Component.translatable("hud.reignofnether.wither_skeleton_prod.requires_shrine").getString(), Style.EMPTY)
         ));
 
         return new Button(

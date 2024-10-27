@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -68,13 +69,22 @@ public class TownCentre extends ProductionBuilding {
                 () -> BuildingClientEvents.setBuildingToPlace(TownCentre.class),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(TownCentre.buildingName + " (Capitol)", Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.town_centre.name", " (Capitol)").getString(),
+                                Style.EMPTY.withBold(true)
+                        ),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedPop(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("A gazebo at the centre of your village that produces villagers.", Style.EMPTY),
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.town_centre.description1").getString(),
+                                Style.EMPTY
+                        ),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("You may only have one capitol building at any time.", Style.EMPTY)
+                        FormattedCharSequence.forward(
+                                Component.translatable("building.reignofnether.town_centre.limit").getString(),
+                                Style.EMPTY
+                        )
                 ),
                 null
         );

@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -100,15 +101,28 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
             () -> BuildingClientEvents.setBuildingToPlace(Mausoleum.class),
             null,
             List.of(
-                FormattedCharSequence.forward(Mausoleum.buildingName + " (Capitol)", Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedPop(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("A tomb of the dead that produces zombie villagers.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Distorts time to midnight within a " + nightRange + " block radius.", Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("You may only have one capitol building at any time.", Style.EMPTY)
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.mausoleum.name").append(" (")
+                                    .append(Component.translatable("building.reignofnether.capitol")).append(")").getString(),
+                            Style.EMPTY.withBold(true)
+                    ),
+                    ResourceCosts.getFormattedCost(cost),
+                    ResourceCosts.getFormattedPop(cost),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.mausoleum.description1").getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.mausoleum.description2", nightRange).getString(),
+                            Style.EMPTY
+                    ),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(
+                            Component.translatable("building.reignofnether.mausoleum.limit").getString(),
+                            Style.EMPTY
+                    )
             ),
             null
         );

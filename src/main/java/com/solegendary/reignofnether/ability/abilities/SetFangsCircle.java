@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -47,10 +48,10 @@ public class SetFangsCircle extends Ability {
             () -> UnitClientEvents.sendUnitCommand(UnitAction.SET_FANGS_CIRCLE),
             null,
             List.of(
-                FormattedCharSequence.forward("Evoker Fangs (Circular)", Style.EMPTY.withBold(true)),
-                FormattedCharSequence.forward("\uE006  " + EvokerUnit.FANGS_DAMAGE * 2 + "  " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + EvokerUnit.FANGS_RANGE_CIRCLE, MyRenderer.iconStyle),
-                FormattedCharSequence.forward("Have this evoker summon a circle of snapping", Style.EMPTY),
-                FormattedCharSequence.forward("fangs around itself when attacking.", Style.EMPTY)
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.evoker_fangs_circular").getString(), Style.EMPTY.withBold(true)),
+                    FormattedCharSequence.forward("\uE006  " + EvokerUnit.FANGS_DAMAGE * 2 + "  " + "\uE004  " + CD_MAX_SECONDS + "s  \uE005  " + EvokerUnit.FANGS_RANGE_CIRCLE, MyRenderer.iconStyle),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.evoker_fangs_circular.description1").getString(), Style.EMPTY),
+                    FormattedCharSequence.forward(Component.translatable("ability.reignofnether.evoker_fangs_circular.description2").getString(), Style.EMPTY)
             ),
             this
         );

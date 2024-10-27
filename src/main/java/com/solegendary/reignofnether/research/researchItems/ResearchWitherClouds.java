@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,12 +55,12 @@ public class ResearchWitherClouds extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchWitherClouds.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_wither_clouds.name").getString(), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Enemies killed by wither skeletons leave", Style.EMPTY),
-                        FormattedCharSequence.forward("behind a deadly cloud of wither on death.", Style.EMPTY)
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_wither_clouds.description1").getString(), Style.EMPTY),
+                        FormattedCharSequence.forward(Component.translatable("researchitems.reignofnether.research_wither_clouds.description2").getString(), Style.EMPTY)
                 )
         );
     }
