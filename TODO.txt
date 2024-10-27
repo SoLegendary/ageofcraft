@@ -1,0 +1,96 @@
+
+1.19.2-1.0.6
+------------
+
+- Done and tested
+[✔] Done and tested
+[🟡] Partially done, only has a workaround and/or needs testing
+[❌] Not done, top ones are roughly of higher priority
+
+Changes since beta
+------------------
+
+
+
+🛠️ Bugfixes 🛠️
+[✔] Fixed crash related to placing buildings
+[✔] Fixed crash on the title screen for some languages
+[✔] Fixed ticking entity crash related to Pillagers
+[✔] Fixed Zombies spawning as neutral baby zombies
+[✔] Two or more Sculk Catalysts that are too close to each are no longer indestructible
+[✔] Sculk Catalysts show how much extra HP they have on their health number
+[✔] Sculk is removed more consistently upon deleting a catalyst
+    - if the catalyst is deleted before it ever took any damage, the sculk is not removed until another catalyst nearby is deleted again
+[❌] Sculk can now spread on dirt paths and tall grass
+    - mixin SculkCatalystBlockEntity ?
+[❌] Sculk Catalysts now have a sacrifice ability to kill units in case you don't want to use the delete button
+[✔] Can no longer build on Portals on leaves
+[✔] Removed some tall grass that was part of the barracks structure
+[✔] Falling logs now break if they fall into buildings
+[🟡] Fixed the title menu being squished sometimes ?
+
+
+
+⚙ Quality of Life Features ⚙
+[✔] Night circle borders that are overlapping can now be hidden by clicking the clock
+    - tons of exceptions when building a catalyst
+[✔] Night circle borders are now highlighted in green when their source building is selected
+[✔] Visible borders have been shrunk so the line itself is (usually) safe to walk on
+[✔] New /gamerule neutralAggro used to allow treating of all neutral mobs as enemies
+    - Allows attacking neutral mobs using right-click, attack move or when a military unit is idle
+    - This includes all modded and vanilla mobs and defeated players' units
+    - Excludes vexes and huntable animals
+[🟡] Added Discord and Lilypad.gg buttons to the main menu
+    - title goes missing after you load into a world and quit
+
+🎉 Features 🎉
+---------------
+New Monster Building: Sculk Catalyst
+Costs 125 wood
+Like in vanilla, nearby units which die spread sculk blocks
+Warps day to night in a 25-block radius, which can be extended up to 50 blocks with more sculk
+When attacked, destroys nearby sculk blocks before taking damage (effectively giving it +1 hp per sculk)
+Can be upgraded at a Lab (with a Stronghold) to allow wardens to split sonic booms into 3 random nearby enemies within a range of 20
+
+🛠️ Bugfixes 🛠️
+---------------
+Fixed a crash when using the idle workers button
+Fixed survival players being able to deposit into stockpiles on non-English languages
+Iron golem spawn egg texture is fixed
+Survival players can no longer use F12 cam
+The hotkey for bridges has been changed to C to avoid an overlap with Build/Repair
+Fixed a crash when you build over a ledge with no floor
+Podzol, mud, moss and mycelium now convert to nether terrain (as nylium)
+Added a hard stop on opening the creative menu while in F12 cam
+Disabled "being revealed" messages when your capitol is destroyed if fog of war is disabled
+Farm water now turns magma below it into cobblestone and soulsand into soulsoil to prevent becoming a bubble column
+Workers no longer take damage from berry bushes and cacti
+Building blocks no longer drop items for survival players when mined
+Can no longer delete Creepers as this allowed circumventing their fuse timer
+Fixed undead burning too early or too late
+Defeated players now lose all of their research upgrades
+Adjusted camera so it doesn't start underground on most maps
+
+⚙ Quality of Life Features ⚙
+------------------------------
+Tree logs now become affected by gravity whenever any log is broken
+This applies to all log blocks, wood blocks and nether stems
+this is enabled by default but can be toggled using /gamerule doLogFalling
+/rts-fog now works from command blocks (no warnings are given)
+Sources of night warping now have a range indicator, toggleable by clicking the clock, and the exact range for sculk catalysts is written next to the building name
+Night warping areas are now cylinders instead of a sphere (this means it has unlimited vertical range)
+
+⚖ Balancing ⚖️
+---------------
+Capitols now spawn animals closer and immediately spawn some nearby upon being built (within a 40 block radius)
+Piglins may now build basic portals on overworld terrain, but doing so takes twice as long
+The Advanced Portals upgrade removes this penalty
+Default max population has been raised from 100 to 120
+Bridges now take 1/2 damage from explosions
+Witches now throw regeneration potions instead of healing
+Natural monster unit regen is doubled to 1hp per 6s if you are near a night warp source AND it is true night
+Warden Health has been increased from 120 to 150
+Iron golem ore cost ↓ 50, wood cost ↑ 50
+Ravager food cost ↑ 50, build time ↑ 10s
+Hoglin health ↑ 5, attack speed ↑ 0.1, ore cost ↑ 25, build time ↑ 5s, population ↑ 1
+Ghast ore cost ↓ 50, damage to buildings ↑ 2

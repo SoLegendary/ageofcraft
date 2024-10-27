@@ -1,0 +1,26 @@
+{
+    "under_attack": {
+        "subtitle": "sounds.reignofnether.under_attack",
+        "sounds": [ "reignofnether:under_attack" ]
+    },
+    "victory": {
+        "subtitle": "sounds.reignofnether.victory",
+        "sounds": [ "reignofnether:victory" ]
+    },
+    "defeat": {
+        "subtitle": "sounds.reignofnether.defeat",
+        "sounds": [ "reignofnether:defeat" ]
+    },
+    "chat": {
+        "subtitle": "sounds.reignofnether.chat",
+        "sounds": [ "reignofnether:chat" ]
+    },
+    "ally": {
+        "subtitle": "sounds.reignofnether.ally",
+        "sounds": [ "reignofnether:ally" ]
+    },
+    "enemy": {
+        "subtitle": "sounds.reignofnether.enemy",
+        "sounds": [ "reignofnether:enemy" ]
+    }
+}
