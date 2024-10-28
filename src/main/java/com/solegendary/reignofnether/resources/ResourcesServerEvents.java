@@ -250,14 +250,17 @@ public class ResourcesServerEvents {
         for (BlockPos bpAdj : bpsAdj) {
             BlockState bsAdj = level.getBlockState(bpAdj);
             if (isLogBlock(bsAdj) && !bpsExcluded.contains(bpAdj)) {
-                if (bsAdj.hasProperty(BlockStateProperties.AXIS)) {
-                    level.setBlockAndUpdate(bpAdj, FALLING_LOGS.get(bsAdj.getBlock()).defaultBlockState()
-                            .setValue(BlockStateProperties.AXIS, bsAdj.getValue(BlockStateProperties.AXIS)));
-                } else {
-                    level.setBlockAndUpdate(bpAdj, FALLING_LOGS.get(bsAdj.getBlock()).defaultBlockState());
+                Block fallingLogBlock = FALLING_LOGS.get(bsAdj.getBlock());
+                if (fallingLogBlock != null) { // Check if the block exists in FALLING_LOGS
+                    if (bsAdj.hasProperty(BlockStateProperties.AXIS)) {
+                        level.setBlockAndUpdate(bpAdj, fallingLogBlock.defaultBlockState()
+                                .setValue(BlockStateProperties.AXIS, bsAdj.getValue(BlockStateProperties.AXIS)));
+                    } else {
+                        level.setBlockAndUpdate(bpAdj, fallingLogBlock.defaultBlockState());
+                    }
+                    bpsExcluded.add(bpAdj);
+                    fellAdjacentLogs(bpAdj, bpsExcluded, level);
                 }
-                bpsExcluded.add(bpAdj);
-                fellAdjacentLogs(bpAdj, bpsExcluded, level);
             }
         }
     }
