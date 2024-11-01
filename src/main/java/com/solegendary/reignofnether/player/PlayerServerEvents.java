@@ -459,15 +459,9 @@ public class PlayerServerEvents {
 
     public static void closeTopdownGui(int playerId) {
         ServerPlayer serverPlayer = getPlayerById(playerId);
-
-        for (Pair<String, GameType> defaultGameMode : playerDefaultGameModes) {
-            if (serverPlayer.getName().getString().equals(defaultGameMode.getFirst())) {
-                serverPlayer.setGameMode(defaultGameMode.getSecond());
-                return;
-            }
-        }
-        serverPlayer.setGameMode(defaultGameMode);
+        serverPlayer.setGameMode(GameType.SPECTATOR);
     }
+
 
     public static void movePlayer(int playerId, double x, double y, double z) {
         ServerPlayer serverPlayer = getPlayerById(playerId);

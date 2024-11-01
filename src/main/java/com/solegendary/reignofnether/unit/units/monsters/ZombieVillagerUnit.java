@@ -235,6 +235,8 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
         return MobType.UNDEAD;
     }
 
+    private int sunBurnTickCounter = 0;
+
     public void tick() {
         this.setCanPickUpLoot(true);
         super.tick();
@@ -242,10 +244,12 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
         AttackerUnit.tick(this);
         WorkerUnit.tick(this);
 
-        // won't naturally burn since we've extended a Vindicator
-        if (this.isSunBurnTick())
+        sunBurnTickCounter++;
+        if (sunBurnTickCounter % 4 == 0 && this.isSunBurnTick()) {
             this.setSecondsOnFire(8);
+        }
     }
+
 
     @Override
     protected boolean isSunBurnTick() {

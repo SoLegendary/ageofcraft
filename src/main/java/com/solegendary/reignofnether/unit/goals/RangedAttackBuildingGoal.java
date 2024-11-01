@@ -38,28 +38,33 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
     public void setNextBlockTarget() {
         if (this.buildingTarget != null && !buildingTarget.getBlocks().isEmpty()) {
             Random rand = new Random();
-            List<BuildingBlock> nonAirBlocks = buildingTarget.getBlocks().stream().filter(b -> b.isPlaced(this.mob.level)).toList();
-            BuildingBlock block = nonAirBlocks.get(rand.nextInt(nonAirBlocks.size()));
-            this.blockTarget = block.getBlockPos();
+            List<BuildingBlock> nonAirBlocks = buildingTarget.getBlocks().stream()
+                    .filter(b -> b.isPlaced(this.mob.level)).toList();
+
+            // Check if nonAirBlocks is empty
+            if (!nonAirBlocks.isEmpty()) {
+                BuildingBlock block = nonAirBlocks.get(rand.nextInt(nonAirBlocks.size()));
+                this.blockTarget = block.getBlockPos();
+            } else {
+                // Handle the case where there are no non-air blocks available
+                this.blockTarget = null; // or some other fallback logic
+            }
         }
     }
+
 
     public void setBuildingTarget(BlockPos blockPos) {
         if (blockPos != null) {
             if (this.mob.level.isClientSide()) {
                 this.buildingTarget = BuildingUtils.findBuilding(true, blockPos);
-                if (this.buildingTarget != null) {
-                    MiscUtil.addUnitCheckpoint(((Unit) mob), new BlockPos(
-                            buildingTarget.centrePos.getX(),
-                            buildingTarget.originPos.getY() + 1,
-                            buildingTarget.centrePos.getZ())
-                    );
-                    ((Unit) mob).setIsCheckpointGreen(false);
-                }
-            }
-            else {
+            } else {
                 this.buildingTarget = BuildingUtils.findBuilding(false, blockPos);
+            }
+            // Check if the building target is valid
+            if (this.buildingTarget != null && !this.buildingTarget.getBlocks().isEmpty()) {
                 setNextBlockTarget();
+            } else {
+                this.blockTarget = null; // Reset blockTarget if buildingTarget is invalid
             }
             this.start();
         }

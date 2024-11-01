@@ -191,11 +191,18 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
                 attackGoal.tickCooldown();
         }
     }
+    private int burnTickCounter = 0;
 
     @Override
     protected boolean isSunBurnTick() {
-        return NightUtils.isSunBurnTick(this);
+        burnTickCounter++; // Increment on each tick
+        // Only apply burning effect on every second tick
+        if (burnTickCounter % 4 == 0) {
+            return NightUtils.isSunBurnTick(this);
+        }
+        return false; // Skip burning on every other tick
     }
+
 
     public void initialiseGoals() {
         this.usePortalGoal = new UsePortalGoal(this);

@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -53,33 +54,28 @@ public class BuildingUtils {
     }
 
     // returns a list of BPs that may reside in unique chunks for fog of war calcs
-    public static ArrayList<BlockPos> getUniqueChunkBps(Building building) {
+    public static HashSet<BlockPos> getUniqueChunkBps(Building building) {
         AABB aabb = new AABB(
                 building.minCorner,
-                building.maxCorner.offset(1,1,1)
+                building.maxCorner.offset(1, 1, 1)
         );
 
-        ArrayList<BlockPos> bps = new ArrayList<>();
-        double x = aabb.minX;
-        double z = aabb.minZ;
-        do {
-            do {
-                bps.add(new BlockPos(x, aabb.minY, z));
-                x += 16;
+        HashSet<BlockPos> uniqueBps = new HashSet<>();
+        int minX = (int) Math.floor(aabb.minX / 16) * 16;
+        int maxX = (int) Math.ceil(aabb.maxX / 16) * 16;
+        int minZ = (int) Math.floor(aabb.minZ / 16) * 16;
+        int maxZ = (int) Math.ceil(aabb.maxZ / 16) * 16;
+
+        // Add unique chunk positions by stepping through chunks
+        for (int x = minX; x <= maxX; x += 16) {
+            for (int z = minZ; z <= maxZ; z += 16) {
+                uniqueBps.add(new BlockPos(x, (int) aabb.minY, z));
             }
-            while (x <= aabb.maxX);
-            z += 16;
-            x = aabb.minX;
         }
-        while (z <= aabb.maxZ);
 
-        // include far corners
-        bps.add(new BlockPos(aabb.maxX, aabb.minY, aabb.minZ));
-        bps.add(new BlockPos(aabb.minX, aabb.minY, aabb.maxZ));
-        bps.add(new BlockPos(aabb.maxX, aabb.minY, aabb.maxZ));
-
-        return bps;
+        return uniqueBps;
     }
+
 
     // given a string name return a new instance of that building
     public static Building getNewBuilding(String buildingName, Level level, BlockPos pos, Rotation rotation, String ownerName, boolean isDiagonalBridge) {
@@ -144,28 +140,61 @@ public class BuildingUtils {
     // functions for corners/centrePos given only blocks
     // if you have access to the Building itself, you should use .minCorner, .maxCorner and .centrePos
     public static BlockPos getMinCorner(ArrayList<BuildingBlock> blocks) {
-        return new BlockPos(
-                blocks.stream().min(Comparator.comparing(block -> block.getBlockPos().getX())).get().getBlockPos().getX(),
-                blocks.stream().min(Comparator.comparing(block -> block.getBlockPos().getY())).get().getBlockPos().getY(),
-                blocks.stream().min(Comparator.comparing(block -> block.getBlockPos().getZ())).get().getBlockPos().getZ()
-        );
+        MinMaxValues minMax = calculateMinMax(blocks);
+        return new BlockPos(minMax.minX, minMax.minY, minMax.minZ);
     }
+
     public static BlockPos getMaxCorner(ArrayList<BuildingBlock> blocks) {
-        return new BlockPos(
-                blocks.stream().max(Comparator.comparing(block -> block.getBlockPos().getX())).get().getBlockPos().getX(),
-                blocks.stream().max(Comparator.comparing(block -> block.getBlockPos().getY())).get().getBlockPos().getY(),
-                blocks.stream().max(Comparator.comparing(block -> block.getBlockPos().getZ())).get().getBlockPos().getZ()
-        );
+        MinMaxValues minMax = calculateMinMax(blocks);
+        return new BlockPos(minMax.maxX, minMax.maxY, minMax.maxZ);
     }
+
     public static BlockPos getCentrePos(ArrayList<BuildingBlock> blocks) {
-        BlockPos min = getMinCorner(blocks);
-        BlockPos max = getMaxCorner(blocks);
+        MinMaxValues minMax = calculateMinMax(blocks);
         return new BlockPos(
-                (float) (min.getX() + max.getX()) / 2,
-                (float) (min.getY() + max.getY()) / 2,
-                (float) (min.getZ() + max.getZ()) / 2
+                (minMax.minX + minMax.maxX) / 2,
+                (minMax.minY + minMax.maxY) / 2,
+                (minMax.minZ + minMax.maxZ) / 2
         );
     }
+
+    private static MinMaxValues calculateMinMax(ArrayList<BuildingBlock> blocks) {
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+
+        for (BuildingBlock block : blocks) {
+            BlockPos pos = block.getBlockPos();
+            int x = pos.getX();
+            int y = pos.getY();
+            int z = pos.getZ();
+
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (z < minZ) minZ = z;
+
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            if (z > maxZ) maxZ = z;
+        }
+
+        return new MinMaxValues(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    private static class MinMaxValues {
+        int minX, minY, minZ;
+        int maxX, maxY, maxZ;
+
+        public MinMaxValues(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+            this.minX = minX;
+            this.minY = minY;
+            this.minZ = minZ;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.maxZ = maxZ;
+        }
+    }
+
+
 
     public static Vec3i getBuildingSize(ArrayList<BuildingBlock> blocks) {
         BlockPos min = getMinCorner(blocks);
@@ -198,18 +227,19 @@ public class BuildingUtils {
     // returns whether the given pos is part of ANY building in the level
     // WARNING: very processing expensive!
     public static boolean isPosPartOfAnyBuilding(boolean isClientSide, BlockPos bp, boolean onlyPlacedBlocks, int range) {
-        List<Building> buildings;
-        if (isClientSide)
-            buildings = BuildingClientEvents.getBuildings();
-        else
-            buildings = BuildingServerEvents.getBuildings();
+        List<Building> buildings = isClientSide
+                ? BuildingClientEvents.getBuildings()
+                : BuildingServerEvents.getBuildings();
 
-        for (Building building : buildings)
-            if (range == 0 || bp.distSqr(building.centrePos) < range * range)
-                if (building.isPosPartOfBuilding(bp, onlyPlacedBlocks))
-                    return true;
-        return false;
+        // Precompute range squared to avoid repeated calculation
+        int rangeSquared = range * range;
+
+        return buildings.stream().anyMatch(building ->
+                (range == 0 || bp.distSqr(building.centrePos) < rangeSquared) &&
+                        building.isPosPartOfBuilding(bp, onlyPlacedBlocks)
+        );
     }
+
 
     // returns whether the given pos is part of ANY building in the level
     public static boolean isPosInsideAnyBuilding(boolean isClientSide, BlockPos bp) {
@@ -248,37 +278,41 @@ public class BuildingUtils {
         return closestBuilding;
     }
 
-    public static boolean isInNetherRange(boolean isClientside, BlockPos bp) {
-        List<Building> buildings;
-        if (isClientside)
-            buildings = BuildingClientEvents.getBuildings();
-        else
-            buildings = BuildingServerEvents.getBuildings();
+    public static boolean isInNetherRange(boolean isClientSide, BlockPos bp) {
+        List<Building> buildings = getBuildingsList(isClientSide);
 
         for (Building building : buildings) {
             if (building instanceof NetherConvertingBuilding netherBuilding) {
-                double distSqr = bp.distSqr(building.centrePos);
-                if (distSqr <= Math.pow(netherBuilding.getMaxRange(), 2))
+                double maxRangeSquared = Math.pow(netherBuilding.getMaxRange(), 2);
+                if (bp.distSqr(building.centrePos) <= maxRangeSquared) {
                     return true;
+                }
             }
         }
         return false;
     }
 
     public static boolean isWithinRangeOfMaxedCatalyst(LivingEntity entity) {
-        List<Building> buildings;
-        if (entity.level.isClientSide())
-            buildings = BuildingClientEvents.getBuildings();
-        else
-            buildings = BuildingServerEvents.getBuildings();
+        List<Building> buildings = getBuildingsList(entity.level.isClientSide());
+
+        double maxCatalystRangeSquared = SculkCatalyst.ESTIMATED_RANGE * SculkCatalyst.ESTIMATED_RANGE;
 
         for (Building building : buildings) {
-            if (building instanceof SculkCatalyst sc && entity.distanceToSqr(Vec3.atCenterOf(sc.centrePos)) <
-                    SculkCatalyst.ESTIMATED_RANGE * SculkCatalyst.ESTIMATED_RANGE) {
-                if (sc.getUncappedNightRange() >= SculkCatalyst.nightRangeMax * 1.5f)
+            if (building instanceof SculkCatalyst sc) {
+                if (entity.distanceToSqr(Vec3.atCenterOf(sc.centrePos)) < maxCatalystRangeSquared &&
+                        sc.getUncappedNightRange() >= SculkCatalyst.nightRangeMax * 1.5f) {
                     return true;
+                }
             }
         }
         return false;
     }
+
+    // Helper method to get the buildings list based on client or server side.
+    private static List<Building> getBuildingsList(boolean isClientSide) {
+        return isClientSide
+                ? BuildingClientEvents.getBuildings()
+                : BuildingServerEvents.getBuildings();
+    }
+
 }

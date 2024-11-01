@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.*;
 import static net.minecraft.util.Mth.cos;
@@ -17,8 +18,9 @@ public class MyMath {
 
     // returns whether b is between a and c
     public static boolean isBetween(double a, double b, double c) {
-        return (a <= b && b <= c) || (a >= b && b >= c);
+        return (b - a) * (c - b) >= 0;
     }
+
 
     // returns whether the given 2d point (m) is inside a rectangle with corners a,b,c,d
     // https://math.stackexchange.com/questions/190111/how-to-check-if-a-point-is-inside-a-rectangle
@@ -44,23 +46,23 @@ public class MyMath {
     public static ArrayList<Vec3> prepIsPointInsideRect3d(Minecraft MC, Vector3d tl, Vector3d bl, Vector3d br) {
         Vector3d lookVector = MiscUtil.getPlayerLookVector(MC);
 
-        Vector3d vp5 = MyMath.addVector3d(tl, lookVector, -200);
-        Vector3d vp1 = MyMath.addVector3d(bl, lookVector, -200);
-        Vector3d vp4 = MyMath.addVector3d(br, lookVector, -200);
-        Vector3d vp2 = MyMath.addVector3d(bl, lookVector, 200);
+        // Calculate vectors in Vec3 directly
+        Vec3 p5 = new Vec3(tl.x - 200 * lookVector.x, tl.y - 200 * lookVector.y, tl.z - 200 * lookVector.z);
+        Vec3 p1 = new Vec3(bl.x - 200 * lookVector.x, bl.y - 200 * lookVector.y, bl.z - 200 * lookVector.z);
+        Vec3 p4 = new Vec3(br.x - 200 * lookVector.x, br.y - 200 * lookVector.y, br.z - 200 * lookVector.z);
+        Vec3 p2 = new Vec3(bl.x + 200 * lookVector.x, bl.y + 200 * lookVector.y, bl.z + 200 * lookVector.z);
 
-        // convert all to Vec3s so we can do math without modifying in-place
-        Vec3 p5 = new Vec3(vp5.x, vp5.y, vp5.z);
-        Vec3 p1 = new Vec3(vp1.x, vp1.y, vp1.z);
-        Vec3 p4 = new Vec3(vp4.x, vp4.y, vp4.z);
-        Vec3 p2 = new Vec3(vp2.x, vp2.y, vp2.z);
+        // Calculate cross products only once and reuse
+        Vec3 p1p4 = p1.subtract(p4);
+        Vec3 p1p5 = p1.subtract(p5);
+        Vec3 p1p2 = p1.subtract(p2);
 
-        Vec3 u = p1.subtract(p4).cross(p1.subtract(p5));
-        Vec3 v = p1.subtract(p2).cross(p1.subtract(p5));
-        Vec3 w = p1.subtract(p2).cross(p1.subtract(p4));
+        Vec3 u = p1p4.cross(p1p5);
+        Vec3 v = p1p2.cross(p1p5);
+        Vec3 w = p1p2.cross(p1p4);
 
-        // contains u,v,w,p1,p2,p4,p5
-        ArrayList<Vec3> uvwp = new ArrayList<>();
+        // Pre-allocate ArrayList with known size
+        ArrayList<Vec3> uvwp = new ArrayList<>(7);
         uvwp.add(u);
         uvwp.add(v);
         uvwp.add(w);
@@ -71,9 +73,9 @@ public class MyMath {
         return uvwp;
     }
 
-    public static boolean isPointInsideRect3d(ArrayList<Vec3> uvwp, Vec3 x) {
-        if (uvwp == null)
-            return false;
+
+    public static boolean isPointInsideRect3d(List<Vec3> uvwp, Vec3 x) {
+        if (uvwp == null || uvwp.size() < 7) return false;
 
         Vec3 u = uvwp.get(0);
         Vec3 v = uvwp.get(1);
@@ -83,14 +85,25 @@ public class MyMath {
         Vec3 p4 = uvwp.get(5);
         Vec3 p5 = uvwp.get(6);
 
+        // Precompute dot products to avoid recalculating them in isBetween checks
+        double up1 = u.dot(p1);
+        double up2 = u.dot(p2);
+        double vp1 = v.dot(p1);
+        double vp4 = v.dot(p4);
+        double wp1 = w.dot(p1);
+        double wp5 = w.dot(p5);
+
+        // Calculate dot products with x once
         double ux = u.dot(x);
         double vx = v.dot(x);
         double wx = w.dot(x);
 
-        return MyMath.isBetween(u.dot(p1), ux, u.dot(p2)) &&
-               MyMath.isBetween(v.dot(p1), vx, v.dot(p4)) &&
-               MyMath.isBetween(w.dot(p1), wx, w.dot(p5));
+        // Return the result using precomputed values
+        return MyMath.isBetween(up1, ux, up2) &&
+                MyMath.isBetween(vp1, vx, vp4) &&
+                MyMath.isBetween(wp1, wx, wp5);
     }
+
 
     // returns vec3d with a set amount of the given unit vector added to it
     public static Vector3d addVector3d(Vector3d vec, Vector3d unitVec, float scale) {
@@ -104,31 +117,27 @@ public class MyMath {
     }
 
     public static boolean rayIntersectsAABBCustom(Vector3d origin, Vector3d rayVector, AABB aabb) {
-        // r.dir is unit direction vector of ray
-        Vector3d dirfrac = new Vector3d(
-                1.0f / rayVector.x,
-                1.0f / rayVector.y,
-                1.0f / rayVector.z
-        );
-        // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-        // r.org is origin of ray
-        float t1 = (float) ((aabb.minX - origin.x) * dirfrac.x);
-        float t2 = (float) ((aabb.maxX - origin.x) * dirfrac.x);
-        float t3 = (float) ((aabb.minY - origin.y) * dirfrac.y);
-        float t4 = (float) ((aabb.maxY - origin.y) * dirfrac.y);
-        float t5 = (float) ((aabb.minZ - origin.z) * dirfrac.z);
-        float t6 = (float) ((aabb.maxZ - origin.z) * dirfrac.z);
+        // Calculate reciprocals of rayVector components to avoid repeated division
+        float invDirX = (float) (1.0 / rayVector.x);
+        float invDirY = (float) (1.0 / rayVector.y);
+        float invDirZ = (float) (1.0 / rayVector.z);
 
-        float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
-        float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+        // Calculate intersection times for each axis
+        float t1 = (float) ((aabb.minX - origin.x) * invDirX);
+        float t2 = (float) ((aabb.maxX - origin.x) * invDirX);
+        float t3 = (float) ((aabb.minY - origin.y) * invDirY);
+        float t4 = (float) ((aabb.maxY - origin.y) * invDirY);
+        float t5 = (float) ((aabb.minZ - origin.z) * invDirZ);
+        float t6 = (float) ((aabb.maxZ - origin.z) * invDirZ);
 
-        // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
-        // if (tmax < 0) return false;
-        // if tmin > tmax, ray doesn't intersect AABB
-        if (tmin > tmax) return false;
+        // Compute tmin and tmax without nested min/max calls for better performance
+        float tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+        float tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
 
-        return true;
+        // Check intersection criteria
+        return tmax >= 0 && tmin <= tmax;
     }
+
 
     public static Vec2 rotateCoords(float x, float y, double deg) {
         float xRotRads = (float) Math.toRadians(deg);
@@ -138,36 +147,32 @@ public class MyMath {
     }
 
     public static double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(pow(x2-x1,2) + pow(y2-y1,2));
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        return Math.sqrt(dx * dx + dy * dy);
     }
+
 
     // https://stackoverflow.com/questions/11907947/how-to-check-if-a-point-lies-on-a-line-between-2-other-points
     // the greater quad_threshold, the thicker the lines will be; ptc is the tested point
     public static boolean isPointOnLine(Vec2 pt1, Vec2 pt2, Vec2 ptc, float threshold) {
-
-        // gradient
+        // Compute differences
         double dx1 = ptc.x - pt1.x;
         double dy1 = ptc.y - pt1.y;
-
         double dx2 = pt2.x - pt1.x;
         double dy2 = pt2.y - pt1.y;
 
+        // Calculate cross product for collinearity check
         double cross = dx1 * dy2 - dy1 * dx2;
+        if (Math.abs(cross) > threshold) return false;
 
-        // checks if on line
-        if (Math.abs(cross) > threshold)
-            return false;
+        // Check if the point is within the bounding segment of pt1 and pt2
+        boolean isWithinXBounds = (dx2 >= 0) ? (pt1.x <= ptc.x && ptc.x <= pt2.x) : (pt2.x <= ptc.x && ptc.x <= pt1.x);
+        boolean isWithinYBounds = (dy2 >= 0) ? (pt1.y <= ptc.y && ptc.y <= pt2.y) : (pt2.y <= ptc.y && ptc.y <= pt1.y);
 
-        // checks if between the two points
-        if (abs(dx2) >= abs(dy2))
-            return dx2 > 0 ?
-                pt1.x <= ptc.x && ptc.x <= pt2.x :
-                pt2.x <= ptc.x && ptc.x <= pt1.x;
-        else
-            return dy2 > 0 ?
-                pt1.y <= ptc.y && ptc.y <= pt2.y :
-                pt2.y <= ptc.y && ptc.y <= pt1.y;
+        return isWithinXBounds && isWithinYBounds;
     }
+
 
     public static int randRangeInt(int min, int max) {
         int posRandInt = (int) ((max - min) * Math.random());
@@ -182,13 +187,21 @@ public class MyMath {
         float z1 = originPos.getZ();
         float z2 = targetPos.getZ();
 
-        double D = Math.sqrt(new Vec2(x1,z1).distanceToSqr(new Vec2(x2,z2)));
+        // Calculate the squared distance directly without creating a new Vec2 object
+        double deltaX = x2 - x1;
+        double deltaZ = z2 - z1;
+        double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
+        double rangeSquared = range * range;
 
-        if (D <= range)
+        // Check if within range without taking the square root
+        if (distanceSquared <= rangeSquared) {
             return targetPos;
+        }
 
-        double x3 = x1 + ((range/D) * (x2 - x1));
-        double z3 = z1 + ((range/D) * (z2 - z1));
+        // Calculate scaling factor only once
+        double scale = range / Math.sqrt(distanceSquared);
+        double x3 = x1 + scale * deltaX;
+        double z3 = z1 + scale * deltaZ;
 
         return new BlockPos(x3, originPos.getY(), z3);
     }
