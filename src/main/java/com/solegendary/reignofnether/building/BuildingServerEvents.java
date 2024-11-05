@@ -384,7 +384,7 @@ public class BuildingServerEvents {
             }
         }
     }
-
+    public static int destroyCheckTicks = 10;
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent evt) {
         if (evt.phase != TickEvent.Phase.END || evt.level.isClientSide() || evt.level.dimension() != Level.OVERWORLD)
@@ -392,6 +392,7 @@ public class BuildingServerEvents {
 
         serverLevel = (ServerLevel) evt.level;
 
+        // Building sync logic
         buildingSyncTicks -= 1;
         if (buildingSyncTicks <= 0) {
             buildingSyncTicks = BUILDING_SYNC_TICKS_MAX;
@@ -399,26 +400,33 @@ public class BuildingServerEvents {
                 BuildingClientboundPacket.syncBuilding(building.originPos, building.getBlocksPlaced());
         }
 
-        // need to remove from the list first as destroy() will read it to check defeats
-        List<Building> buildingsToDestroy = buildings.stream().filter(Building::shouldBeDestroyed).toList();
-        buildings.removeIf(b -> {
-            if (b.shouldBeDestroyed()) {
-                if (b instanceof NetherConvertingBuilding nb && nb.getZone() != null) {
-                    nb.getZone().startRestoring();
-                    saveNetherZones();
+        // Destroy check logic, executed every 5 ticks
+        destroyCheckTicks -= 1;
+        if (destroyCheckTicks <= 0) {
+            destroyCheckTicks = 10;
+
+            List<Building> buildingsToDestroy = buildings.stream().filter(Building::shouldBeDestroyed).toList();
+            buildings.removeIf(b -> {
+                if (b.shouldBeDestroyed()) {
+                    if (b instanceof NetherConvertingBuilding nb && nb.getZone() != null) {
+                        nb.getZone().startRestoring();
+                        saveNetherZones();
+                    }
+                    FrozenChunkClientboundPacket.setBuildingDestroyedServerside(b.originPos);
+                    return true;
                 }
-                FrozenChunkClientboundPacket.setBuildingDestroyedServerside(b.originPos);
-                return true;
-            }
-            return false;
-        });
+                return false;
+            });
 
-        for (Building building : buildingsToDestroy)
-            building.destroy(serverLevel);
+            for (Building building : buildingsToDestroy)
+                building.destroy(serverLevel);
+        }
 
+        // Tick remaining buildings
         for (Building building : buildings)
             building.tick(serverLevel);
 
+        // Nether zones logic
         for (NetherZone netherConversionZone : netherZones)
             netherConversionZone.tick(serverLevel);
 
@@ -428,6 +436,7 @@ public class BuildingServerEvents {
         if (nzSizeBefore != nzSizeAfter)
             saveNetherZones();
     }
+
 
     // cancel all explosion damage to non-building blocks
     // cancel damage to entities and non-building blocks if it came from a non-entity source such as:

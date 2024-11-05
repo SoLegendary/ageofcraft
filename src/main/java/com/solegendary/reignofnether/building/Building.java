@@ -445,7 +445,7 @@ public abstract class Building {
             return true;
         if (this.level.isClientSide() && (!FogOfWarClientEvents.isBuildingInBrightChunk(this) || !isDestroyedServerside))
             return false;
-        if (blockPlaceQueue.size() > 0)
+        if (!blockPlaceQueue.isEmpty())
             return false;
         if (getBlocksPlaced() <= 0)
             return true;
