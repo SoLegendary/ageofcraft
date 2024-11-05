@@ -89,23 +89,27 @@ public class HudClientEvents {
 
     // eg. entity.reignofnether.zombie_unit -> zombie
     public static String getSimpleEntityName(Entity entity) {
+        if (entity == null) {
+            return "UnknownEntity";
+        }
+
         if (entity instanceof Unit) {
             if (entity.hasCustomName()) {
                 return entity.getType().getDescription().getString()
-                        .replace(" ","")
-                        .replace("entity.reignofnether.","")
-                        .replace("_unit","")
-                        .replace(".none","");
+                        .replace(" ", "")
+                        .replace("entity.reignofnether.", "")
+                        .replace("_unit", "")
+                        .replace(".none", "");
             } else {
                 return entity.getName().getString()
-                        .replace(" ","")
-                        .replace("entity.reignofnether.","")
-                        .replace("_unit","")
-                        .replace(".none","");
+                        .replace(" ", "")
+                        .replace("entity.reignofnether.", "")
+                        .replace("_unit", "")
+                        .replace(".none", "");
             }
-        }
-        else
+        } else {
             return entity.getName().getString();
+        }
     }
 
     public static void showTemporaryMessage(String msg) {
@@ -1035,15 +1039,20 @@ public class HudClientEvents {
 
     // MANAGE CONTROL GROUPS
     @SubscribeEvent
+    // File: HudClientEvents.java
+
     public static void onKeyPress(ScreenEvent.KeyPressed.KeyPressed.Pre evt) {
         if (!(MC.screen instanceof TopdownGui))
             return;
 
         // Prevent spectator mode options from showing up
         if (OrthoviewClientEvents.isEnabled()) {
-            for (Keybinding numKey : Keybindings.nums)
-                if (numKey.key == evt.getKeyCode())
+            for (Keybinding numKey : Keybindings.nums) {
+                if (numKey.key == evt.getKeyCode()) {
                     evt.setCanceled(true);
+                    return;
+                }
+            }
         }
 
         // Deselect everything
@@ -1053,30 +1062,36 @@ public class HudClientEvents {
             BuildingClientEvents.setBuildingToPlace(null);
         }
 
-        // Initialize controlGroups with empty arrays if not already initialized
+        // Ensure controlGroups is initialized correctly
         if (controlGroups.size() < Keybindings.nums.length) {
-            controlGroups.clear(); // Clear in case of a previous partial initialization
+            controlGroups.clear(); // Clear any existing data
             for (Keybinding keybinding : Keybindings.nums) {
                 controlGroups.add(new ControlGroup());
             }
         }
 
-        // Access and save to controlGroups if index is within bounds
+        // Access and save to controlGroups safely
         for (Keybinding keybinding : Keybindings.nums) {
-            int index = Integer.parseInt(keybinding.buttonLabel);
-            if (index >= 0 && index < controlGroups.size()) {  // Bounds check
+            int index;
+            try {
+                index = Integer.parseInt(keybinding.buttonLabel); // Parse index from buttonLabel
+            } catch (NumberFormatException e) {
+                continue; // Skip invalid buttonLabel entries
+            }
+
+            if (index >= 0 && index < controlGroups.size()) { // Bounds check
                 if (Keybindings.ctrlMod.isDown() && evt.getKeyCode() == keybinding.key) {
                     controlGroups.get(index).saveFromSelected(keybinding);
                 }
             }
         }
 
-        // Open chat while orthoview is enabled
+        // Open chat while Orthoview is enabled
         if (OrthoviewClientEvents.isEnabled() && evt.getKeyCode() == Keybindings.chat.key) {
             MC.setScreen(new ChatScreen(""));
         }
 
-        // Cycle through selected units
+        // Cycle through selected units safely
         if (evt.getKeyCode() == Keybindings.tab.key) {
             List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
                     .filter(e -> e instanceof Unit)
@@ -1087,25 +1102,32 @@ public class HudClientEvents {
                 Collections.reverse(entities);
             }
 
-            if (hudSelectedEntity != null) {
-                String hudSelectedEntityName = HudClientEvents.getSimpleEntityName(hudSelectedEntity);
-                String lastEntityName = "";
-                boolean cycled = false;
-                for (LivingEntity entity : entities) {
-                    String currentEntityName = HudClientEvents.getSimpleEntityName(entity);
-                    if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
-                        hudSelectedEntity = entity;
-                        cycled = true;
-                        break;
+            if (!entities.isEmpty()) { // Check if the entities list is not empty
+                if (hudSelectedEntity != null) {
+                    String hudSelectedEntityName = HudClientEvents.getSimpleEntityName(hudSelectedEntity);
+                    String lastEntityName = "";
+                    boolean cycled = false;
+
+                    for (LivingEntity entity : entities) {
+                        String currentEntityName = HudClientEvents.getSimpleEntityName(entity);
+                        if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
+                            hudSelectedEntity = entity;
+                            cycled = true;
+                            break;
+                        }
+                        lastEntityName = currentEntityName;
                     }
-                    lastEntityName = currentEntityName;
-                }
-                if (!cycled) {
-                    hudSelectedEntity = entities.get(0);
+
+                    if (!cycled) {
+                        hudSelectedEntity = entities.get(0); // Safely access the first element
+                    }
+                } else {
+                    hudSelectedEntity = entities.get(0); // Initialize if not already set
                 }
             }
         }
     }
+
 
 
     // newUnitIds are replacing oldUnitIds - replace them in every control group while retaining their index

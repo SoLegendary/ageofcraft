@@ -683,24 +683,47 @@ public class UnitClientEvents {
 
     public static Relationship getPlayerToEntityRelationship(LivingEntity entity) {
         if (MC.level != null && MC.player != null) {
+            String playerName = MC.player.getName().getString();
 
-            if (entity instanceof Unit unit && unit.getOwnerName().isBlank())
+            // Check if the entity is a Unit with no owner (neutral)
+            if (entity instanceof Unit unit && unit.getOwnerName().isBlank()) {
                 return Relationship.NEUTRAL;
+            }
 
-            if (entity instanceof Player)
-                return Relationship.HOSTILE;
-            else if (!(entity instanceof Unit))
+            // If the entity is a player, default to hostile unless further alliance checks are needed
+            if (entity instanceof Player playerEntity) {
+                String entityName = playerEntity.getName().getString();
+
+                if (playerName.equals(entityName)) {
+                    return Relationship.OWNED;
+                } else if (AllianceSystem.isAllied(playerName, entityName)) {
+                    return Relationship.FRIENDLY;
+                } else {
+                    return Relationship.HOSTILE;
+                }
+            }
+
+            // Check if the entity is not a Unit (e.g., an NPC or neutral entity)
+            if (!(entity instanceof Unit)) {
                 return Relationship.NEUTRAL;
+            }
 
+            // For Units, check ownership and alliance
             String ownerName = ((Unit) entity).getOwnerName();
 
-            if (ownerName.equals(MC.player.getName().getString()))
+            if (playerName.equals(ownerName)) {
                 return Relationship.OWNED;
-            else
+            } else if (AllianceSystem.isAllied(playerName, ownerName)) {
+                return Relationship.FRIENDLY;
+            } else {
                 return Relationship.HOSTILE;
+            }
         }
+
+        // If the world or player is null, return NEUTRAL
         return Relationship.NEUTRAL;
     }
+
 
     public static void syncConvertedUnits(String ownerName, int[] oldUnitIds, int[] newUnitIds) {
 

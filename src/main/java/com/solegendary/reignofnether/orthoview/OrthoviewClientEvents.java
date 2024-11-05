@@ -120,7 +120,7 @@ public class OrthoviewClientEvents {
             int avgHeight = count > 0 ? sumHeights / count : playerPos.getY();
 
             // Update ORTHOVIEW values based on the average height
-            ORTHOVIEW_PLAYER_BASE_Y = avgHeight + 40;
+            ORTHOVIEW_PLAYER_BASE_Y = Math.max(avgHeight + 40, 0);
             ORTHOVIEW_PLAYER_MAX_Y = avgHeight + 100;
         }
     }

@@ -46,14 +46,17 @@ public abstract class RenderChunkRegionMixin {
             Block blockBelow = level.getBlockState(pPos.below()).getBlock();
             BlockState replacementBs = null;
 
-            if (block == BlockRegistrar.DECAYABLE_NETHER_WART_BLOCK.get())
+            // Check for specific block types and assign replacement block states
+            if (block == BlockRegistrar.DECAYABLE_NETHER_WART_BLOCK.get()) {
                 replacementBs = Blocks.RED_STAINED_GLASS.defaultBlockState();
-            else if (block instanceof LeavesBlock)
+            } else if (block instanceof LeavesBlock) {
                 replacementBs = Blocks.GREEN_STAINED_GLASS.defaultBlockState();
-            else if (block instanceof SnowLayerBlock && blockBelow instanceof LeavesBlock)
+            } else if (block instanceof SnowLayerBlock && blockBelow instanceof LeavesBlock) {
                 replacementBs = Blocks.AIR.defaultBlockState();
+            }
 
-            if (replacementBs != null) {
+            // Only proceed if replacementBs is valid and level is loaded
+            if (replacementBs != null && isBlockStateValid(level, pPos)) {
                 if (OrthoviewClientEvents.hideLeavesMethod == OrthoviewClientEvents.LeafHideMethod.ALL) {
                     cir.setReturnValue(replacementBs);
                     return;
@@ -67,6 +70,19 @@ public abstract class RenderChunkRegionMixin {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Verifies if the block state at the given position is valid within the current level.
+     * Ensures the level has access to the position's block state without exceptions.
+     */
+    private boolean isBlockStateValid(Level level, BlockPos pPos) {
+        try {
+            level.getBlockState(pPos);
+            return true; // Check if a valid block state is accessible
+        } catch (Exception e) {
+            return false; // Return false if accessing block state fails
         }
     }
 }

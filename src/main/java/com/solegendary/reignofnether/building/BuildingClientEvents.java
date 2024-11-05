@@ -17,6 +17,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.researchItems.ResearchAdvancedPortals;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
+import com.solegendary.reignofnether.unit.AllianceSystem;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -883,12 +884,23 @@ public class BuildingClientEvents {
     }
 
     public static Relationship getPlayerToBuildingRelationship(Building building) {
-        if (MC.player != null && building.ownerName.equals(MC.player.getName().getString()))
-            return Relationship.OWNED;
-        else if (building.ownerName.isBlank())
-            return Relationship.NEUTRAL;
-        else
-            return Relationship.HOSTILE;
+        if (MC.player != null) {
+            String playerName = MC.player.getName().getString();
+            String buildingOwnerName = building.ownerName;
+
+            if (playerName.equals(buildingOwnerName)) {
+                return Relationship.OWNED;
+            } else if (AllianceSystem.isAllied(playerName, buildingOwnerName)) {
+                return Relationship.FRIENDLY;
+            } else if (buildingOwnerName.isBlank()) {
+                return Relationship.NEUTRAL;
+            } else {
+                return Relationship.HOSTILE;
+            }
+        }
+
+        // If MC.player is null, we can't determine the relationship, so return NEUTRAL.
+        return Relationship.NEUTRAL;
     }
 
     // does the player own one of these buildings?

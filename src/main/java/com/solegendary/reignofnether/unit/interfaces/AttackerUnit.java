@@ -169,10 +169,7 @@ public interface AttackerUnit {
     }
 
     public default void attackClosestEnemy(ServerLevel level) {
-        float aggroRange = this.getAggroRange();
-        GarrisonableBuilding garr = GarrisonableBuilding.getGarrison((Unit) this);
-        if (garr != null)
-            aggroRange  = garr.getAttackRange();
+        float aggroRange = getAdjustedAggroRange((Unit) this);
 
         Mob closestMob = MiscUtil.findClosestAttackableUnit((Mob) this, aggroRange, level);
         if (closestMob != null) {
@@ -180,6 +177,7 @@ public interface AttackerUnit {
             setUnitAttackTarget(closestMob);
             return;
         }
+
         if (canAttackBuildings()) {
             Building closestBuilding = MiscUtil.findClosestAttackableBuilding((Mob) this, aggroRange, level);
             if (closestBuilding != null) {
@@ -187,6 +185,11 @@ public interface AttackerUnit {
                 setAttackBuildingTarget(closestBuilding.originPos);
             }
         }
+    }
+
+    private float getAdjustedAggroRange(Unit unit) {
+        GarrisonableBuilding garr = GarrisonableBuilding.getGarrison(unit);
+        return (garr != null) ? garr.getAttackRange() : 15;
     }
 
     public static double getWeaponDamageModifier(AttackerUnit attackerUnit) {

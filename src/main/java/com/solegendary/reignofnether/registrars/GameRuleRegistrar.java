@@ -7,6 +7,7 @@ public class GameRuleRegistrar {
     public static GameRules.Key<GameRules.BooleanValue> LOG_FALLING;
     public static GameRules.Key<GameRules.BooleanValue> NEUTRAL_AGGRO;
 
+
     public static void init() {
         // do cut trees convert their logs into falling logs?
         LOG_FALLING = GameRules.register("doLogFalling", GameRules.Category.MISC,

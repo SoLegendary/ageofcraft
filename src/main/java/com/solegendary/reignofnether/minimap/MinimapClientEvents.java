@@ -20,6 +20,7 @@ import com.solegendary.reignofnether.time.NightCircleMode;
 import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialStage;
+import com.solegendary.reignofnether.unit.AllianceSystem;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -469,17 +470,27 @@ public class MinimapClientEvents {
             if (!FogOfWarClientEvents.isInBrightChunk(minimapUnit.pos) || MC.player == null)
                 continue;
 
+            String playerName = MC.player.getName().getString();
+            String unitOwnerName = minimapUnit.ownerName;
             Relationship relationship = Relationship.HOSTILE;
-            if (MC.player.getName().getString().equals(minimapUnit.ownerName))
-                relationship = Relationship.OWNED;
-            else if (minimapUnit.ownerName.isBlank())
-                relationship = Relationship.NEUTRAL;
 
-            drawUnitOnMap(minimapUnit.pos.getX(),
+            // Determine relationship based on ownership and alliances
+            if (playerName.equals(unitOwnerName)) {
+                relationship = Relationship.OWNED;
+            } else if (unitOwnerName.isBlank()) {
+                relationship = Relationship.NEUTRAL;
+            } else if (AllianceSystem.isAllied(playerName, unitOwnerName)) {
+                relationship = Relationship.FRIENDLY;
+            }
+
+            // Draw the unit on the map based on its relationship
+            drawUnitOnMap(
+                    minimapUnit.pos.getX(),
                     minimapUnit.pos.getZ(),
                     relationship
             );
         }
+
     }
 
     private static void drawUnitOnMap(int xc, int zc, Relationship relationship) {

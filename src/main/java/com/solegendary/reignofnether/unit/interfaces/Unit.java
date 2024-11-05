@@ -5,8 +5,10 @@ import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.nether.NetherBlocks;
+import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchFireResistance;
+import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -18,11 +20,15 @@ import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -79,7 +85,20 @@ public interface Unit {
 
     public static void tick(Unit unit) {
         Mob unitMob = (Mob) unit;
+        if (!unitMob.level.isClientSide() && unitMob.level instanceof ServerLevel serverLevel) {
+            ServerChunkCache chunkProvider = serverLevel.getChunkSource();
 
+            BlockPos unitPos = unitMob.blockPosition();
+            ChunkPos currentChunkPos = new ChunkPos(unitPos);
+
+            // Load a 2-chunk radius around the unit
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    ChunkPos chunkPos = new ChunkPos(currentChunkPos.x + dx, currentChunkPos.z + dz);
+                    chunkProvider.addRegionTicket(TicketType.FORCED, chunkPos, 2, chunkPos);
+                }
+            }
+        }
         for (Ability ability : unit.getAbilities())
             ability.tickCooldown();
 

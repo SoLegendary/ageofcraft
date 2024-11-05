@@ -50,6 +50,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.world.ForgeChunkManager;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.*;
 import static com.solegendary.reignofnether.player.PlayerServerEvents.isRTSPlayer;
@@ -234,7 +236,7 @@ public abstract class Building {
 
     // returns the lowest Y value block in this.blocks to the given blockPos
     // radius offset is the distance away from the building itself to have the returned pos
-    // excludes positions inside the building so that workers  move out of the building foundations
+    //s excludes positions inside the building so that workers  move out of the building foundations
     public BlockPos getClosestGroundPos(BlockPos bpTarget, int radiusOffset) {
         float minDist = 999999;
         BlockPos minPos = this.minCorner;
@@ -305,61 +307,70 @@ public abstract class Building {
     // place blocks according to the following rules:
     // - block must be connected to something else (not air)
     // - block must be the lowest Y value possible
+    private final Random rand = new Random();
+
     private void buildNextBlock(ServerLevel level, String builderName) {
 
-        // if the building is already constructed then start subtracting resources for repairs
+        // Handle repairs if the building is constructed
         if (isBuilt) {
             if (!ResourcesServerEvents.canAfford(builderName, ResourceName.WOOD, 1)) {
                 ResourcesClientboundPacket.warnInsufficientResources(builderName, true, false, true);
                 return;
+            } else {
+                ResourcesServerEvents.addSubtractResources(new Resources(builderName, 0, -1, 0));
             }
-            else
-                ResourcesServerEvents.addSubtractResources(new Resources(builderName,0,-1,0));
         }
 
+        // Retrieve unplaced, non-air blocks directly as a stream, avoiding redundant ArrayList creation
         ArrayList<BuildingBlock> unplacedBlocks = new ArrayList<>(blocks.stream().filter(
                 b -> !b.isPlaced(getLevel()) && !b.getBlockState().isAir()
         ).toList());
 
         int minY = getMinCorner(unplacedBlocks).getY();
-        ArrayList<BuildingBlock> validBlocks = new ArrayList<>();
-
-        // iterate through unplaced blocks and start at the bottom Y values
-        // prioritise placing blocks that are connected to other blocks (nonfloating)
+        List<BuildingBlock> validBlocks = new ArrayList<>();
         int nonFloatingBlocks = 0;
 
         if (!(this instanceof AbstractBridge)) {
+            // Identify non-floating valid blocks first
             for (BuildingBlock block : unplacedBlocks) {
                 BlockPos bp = block.getBlockPos();
-                if ((bp.getY() <= minY) &&
-                        (!level.getBlockState(bp.below()).isAir() ||
-                                !level.getBlockState(bp.east()).isAir() ||
-                                !level.getBlockState(bp.west()).isAir() ||
-                                !level.getBlockState(bp.south()).isAir() ||
-                                !level.getBlockState(bp.north()).isAir() ||
-                                !level.getBlockState(bp.above()).isAir())) {
-                    nonFloatingBlocks += 1;
+                BlockState stateBelow = level.getBlockState(bp.below());
+
+                // Only add blocks that are at minY and are connected to non-air blocks
+                if (bp.getY() <= minY && (!stateBelow.isAir() ||
+                        !level.getBlockState(bp.east()).isAir() ||
+                        !level.getBlockState(bp.west()).isAir() ||
+                        !level.getBlockState(bp.south()).isAir() ||
+                        !level.getBlockState(bp.north()).isAir() ||
+                        !level.getBlockState(bp.above()).isAir())) {
+                    nonFloatingBlocks++;
                     validBlocks.add(block);
                 }
             }
         }
-        // if there were no nonFloating blocks then allow floating blocks
+
+        // If no non-floating blocks, allow floating blocks
         if (nonFloatingBlocks == 0) {
-            for (BuildingBlock block : unplacedBlocks) {
-                BlockPos bp = block.getBlockPos();
-                if (bp.getY() <= minY || this instanceof AbstractBridge)
-                    validBlocks.add(block);
-            }
+            validBlocks.addAll(unplacedBlocks.stream()
+                    .filter(block -> block.getBlockPos().getY() <= minY || this instanceof AbstractBridge)
+                    .toList());
         }
-        if (validBlocks.size() > 0) {
+
+        if (!validBlocks.isEmpty()) {
             if (this instanceof AbstractBridge) {
-                ArrayList<WorkerUnit> builders = getBuilders(this.level);
-                BlockPos builderPos = ((LivingEntity) builders.get(new Random().nextInt(builders.size()))).getOnPos();
-                validBlocks.sort(Comparator.comparing(bb -> bb.getBlockPos().distSqr(builderPos)));
+                // Retrieve builder units and sort valid blocks by distance from a builder
+                List<WorkerUnit> builders = getBuilders(this.level);
+                if (!builders.isEmpty()) {
+                    BlockPos builderPos = ((LivingEntity) builders.get(rand.nextInt(builders.size()))).getOnPos();
+                    validBlocks.sort(Comparator.comparingDouble(bb -> bb.getBlockPos().distSqr(builderPos)));
+                }
             }
+
+            // Add the closest valid block to the placement queue
             this.blockPlaceQueue.add(validBlocks.get(0));
         }
     }
+
 
     private void extinguishFires(ServerLevel level) {
         BlockPos minPos = this.minCorner.offset(-1,-1,-1);
@@ -378,36 +389,56 @@ public abstract class Building {
     }
 
     public void destroyRandomBlocks(int amount) {
-        if (getLevel().isClientSide())
+        if (getLevel().isClientSide()) {
             return;
-        ArrayList<BuildingBlock> placedBlocks = new ArrayList<>(blocks.stream().filter(
-                b -> { // avoid destroying blocks adjacent to liquids unless its a bridge or is itself a liquid
-                    if (!(this instanceof AbstractBridge) &&
-                            !(this.level.getBlockState(b.getBlockPos()).getMaterial().isLiquid()) &&
-                            (this.level.getBlockState(b.getBlockPos().above()).getMaterial().isLiquid() ||
-                                    this.level.getBlockState(b.getBlockPos().north()).getMaterial().isLiquid() ||
-                                    this.level.getBlockState(b.getBlockPos().south()).getMaterial().isLiquid() ||
-                                    this.level.getBlockState(b.getBlockPos().east()).getMaterial().isLiquid() ||
-                                    this.level.getBlockState(b.getBlockPos().west()).getMaterial().isLiquid()))
-                        return false;
-                    if (!canDestroyBlock(b.getBlockPos().offset(-originPos.getX(), -originPos.getY(), -originPos.getZ())))
-                        return false;
-                    return b.isPlaced(getLevel());
-                }
-        ).toList());
-
-        Collections.shuffle(placedBlocks);
-        for (int i = 0; i < amount && i < placedBlocks.size(); i++) {
-            BlockPos bp = placedBlocks.get(i).getBlockPos();
-            this.onBlockBreak((ServerLevel) getLevel(), bp, false);
-            if (getLevel().getBlockState(bp).getMaterial().isLiquid())
-                getLevel().setBlockAndUpdate(bp, Blocks.AIR.defaultBlockState());
-            else
-                getLevel().destroyBlock(bp, false);
         }
-        if (amount > 0)
+
+        List<BuildingBlock> placedBlocks = blocks.stream()
+                .filter(b -> {
+                    BlockPos pos = b.getBlockPos();
+                    BlockState state = level.getBlockState(pos);
+
+                    // Skip blocks near liquids unless it's a bridge or the block itself is a liquid
+                    if (!(this instanceof AbstractBridge) && !state.getMaterial().isLiquid()) {
+                        if (level.getBlockState(pos.above()).getMaterial().isLiquid() ||
+                                level.getBlockState(pos.north()).getMaterial().isLiquid() ||
+                                level.getBlockState(pos.south()).getMaterial().isLiquid() ||
+                                level.getBlockState(pos.east()).getMaterial().isLiquid() ||
+                                level.getBlockState(pos.west()).getMaterial().isLiquid()) {
+                            return false;
+                        }
+                    }
+
+                    // Ensure block can be destroyed and is placed
+                    return canDestroyBlock(pos.offset(-originPos.getX(), -originPos.getY(), -originPos.getZ())) &&
+                            b.isPlaced(getLevel());
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Randomly destroy up to the specified amount of blocks
+        int blocksToDestroy = Math.min(amount, placedBlocks.size());
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < blocksToDestroy; i++) {
+            int randomIndex = random.nextInt(placedBlocks.size());
+            BuildingBlock block = placedBlocks.remove(randomIndex);
+            BlockPos bp = block.getBlockPos();
+
+            // Destroy the block and handle liquids by replacing them with air
+            this.onBlockBreak((ServerLevel) getLevel(), bp, false);
+            if (getLevel().getBlockState(bp).getMaterial().isLiquid()) {
+                getLevel().setBlockAndUpdate(bp, Blocks.AIR.defaultBlockState());
+            } else {
+                getLevel().destroyBlock(bp, false);
+            }
+        }
+
+        // Send warning if any blocks were destroyed
+        if (amount > 0) {
             AttackWarningClientboundPacket.sendWarning(ownerName, BuildingUtils.getCentrePos(getBlocks()));
+        }
     }
+
 
     public boolean shouldBeDestroyed() {
         if (!this.level.getWorldBorder().isWithinBounds(centrePos))
@@ -689,75 +720,86 @@ public abstract class Building {
 
     // if there aren't already too many animals nearby, spawn some random huntable animals
     private void spawnHuntableAnimalsNearby(int range) {
-        if (level.isClientSide())
-            return;
+        // Return early if running on client-side
+        if (level.isClientSide()) return;
 
-        int numNearbyAnimals = MiscUtil.getEntitiesWithinRange(
-                new Vector3d(centrePos.getX(), centrePos.getY(), centrePos.getZ()),
-                range,
-                Animal.class,
-                level
-        ).stream().filter(ResourceSources::isHuntableAnimal).toList().size();
-        int numNearbyChickens = MiscUtil.getEntitiesWithinRange(
-                new Vector3d(centrePos.getX(), centrePos.getY(), centrePos.getZ()),
-                range,
-                Chicken.class,
-                level
-        ).stream().toList().size();
+        // Get entities within range and filter only huntable animals
+        List<Animal> nearbyAnimals = MiscUtil.getEntitiesWithinRange(
+                new Vector3d(centrePos.getX(), centrePos.getY(), centrePos.getZ()), range, Animal.class, level
+        ).stream().filter(ResourceSources::isHuntableAnimal).toList();
 
-        if (numNearbyAnimals - (numNearbyChickens / 2) >= MAX_ANIMALS)
-            return;
+        // Get nearby chickens within the range
+        List<Chicken> nearbyChickens = MiscUtil.getEntitiesWithinRange(
+                new Vector3d(centrePos.getX(), centrePos.getY(), centrePos.getZ()), range, Chicken.class, level
+        ).stream().toList();
 
-        int spawnAttempts = 0;
-        BlockState spawnBs;
-        BlockPos spawnBp;
+        // Calculate the adjusted number of animals
+        int adjustedNumAnimals = nearbyAnimals.size() - (nearbyChickens.size() / 2);
+        if (adjustedNumAnimals >= MAX_ANIMALS) return;
+
         Random random = new Random();
-        do {
-            int x = centrePos.getX() + random.nextInt(-range/2, range/2);
-            int z = centrePos.getZ() + random.nextInt(-range/2, range/2);
-            int y = level.getChunkAt(new BlockPos(x,0,z)).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-            BlockState bs;
-            do {
-                bs = level.getBlockState(new BlockPos(x,y,z));
-                if (!bs.getMaterial().isSolid() && !bs.getMaterial().isLiquid() && y > 0)
-                    y -= 1;
-                else
+        BlockPos spawnBp = null;  // Initialize spawnBp to null
+        BlockState spawnBs = null;
+        int spawnAttempts = 0;
+
+        // Try to find a suitable spawn position with a maximum of 20 attempts
+        while (spawnAttempts < 20) {
+            spawnAttempts++;
+
+            // Generate random position within half the range
+            int x = centrePos.getX() + random.nextInt(range) - (range / 2);
+            int z = centrePos.getZ() + random.nextInt(range) - (range / 2);
+            int y = level.getChunkAt(new BlockPos(x, 0, z)).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+
+            // Adjust y-coordinate to find a valid surface
+            while (y > 0) {
+                BlockState bs = level.getBlockState(new BlockPos(x, y, z));
+                if (!bs.getMaterial().isSolid() && !bs.getMaterial().isLiquid()) {
+                    y--;
+                } else {
                     break;
-            } while (true);
-            spawnBp = new BlockPos(x,y,z);
+                }
+            }
+
+            spawnBp = new BlockPos(x, y, z);
             spawnBs = level.getBlockState(spawnBp);
-            spawnAttempts += 1;
-            if (spawnAttempts > 20) {
-                System.out.println("WARNING: Gave up trying to find a suitable animal spawn!");
-                return;
+
+            // Check if the spawn position is valid
+            if (spawnBs.getMaterial().isSolid() &&
+                    spawnBs.getMaterial() != Material.LEAVES &&
+                    spawnBs.getMaterial() != Material.WOOD &&
+                    spawnBp.distSqr(centrePos) >= 400 &&
+                    !BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp) &&
+                    !BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above())) {
+                break;
             }
         }
-        while (!spawnBs.getMaterial().isSolid() ||
-                spawnBs.getMaterial() == Material.LEAVES ||
-                spawnBs.getMaterial() == Material.WOOD ||
-                spawnBp.distSqr(centrePos) < 400 ||
-                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp) ||
-                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
 
-        EntityType<? extends Animal> animalType = null;
+        // Check if a valid spawn position was found
+        if (spawnBp == null || spawnBs == null || !spawnBs.getMaterial().isSolid()) {
+            System.out.println("WARNING: Gave up trying to find a suitable animal spawn!");
+            return;
+        }
+
+        // Select animal type and spawn quantity
+        EntityType<? extends Animal> animalType;
         int spawnQty = 1;
         switch (random.nextInt(4)) {
-            case 0 -> {
-                animalType = EntityType.COW;
-            }
-            case 1 -> {
-                animalType = EntityType.PIG;
-            }
-            case 2 -> {
-                animalType = EntityType.SHEEP;
-            }
+            case 0 -> animalType = EntityType.COW;
+            case 1 -> animalType = EntityType.PIG;
+            case 2 -> animalType = EntityType.SHEEP;
             case 3 -> {
                 animalType = EntityType.CHICKEN;
                 spawnQty = 2;
             }
+            default -> throw new IllegalStateException("Unexpected value");
         }
+
+        // Spawn the animals
         UnitServerEvents.spawnMobs(animalType, (ServerLevel) level, spawnBp.above(), spawnQty, "");
     }
+
+
 
     // returns each blockpos origin of 16x16x16 renderchunks that this building overlaps
     // extendedRange includes additional chunks to account for nether conversion and/or resource gathering

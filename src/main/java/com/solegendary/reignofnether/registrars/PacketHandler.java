@@ -18,6 +18,9 @@ import com.solegendary.reignofnether.tps.TPSClientBoundPacket;
 import com.solegendary.reignofnether.ability.AbilityClientboundPacket;
 import com.solegendary.reignofnether.tutorial.TutorialClientboundPacket;
 import com.solegendary.reignofnether.tutorial.TutorialServerboundPacket;
+import com.solegendary.reignofnether.unit.AllianceAddPacket;
+import com.solegendary.reignofnether.unit.AllianceRemovePacket;
+import com.solegendary.reignofnether.unit.AllianceResetPacket;
 import com.solegendary.reignofnether.unit.packets.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
@@ -129,5 +132,22 @@ public final class PacketHandler {
         INSTANCE.messageBuilder(TutorialServerboundPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(TutorialServerboundPacket::encode).decoder(TutorialServerboundPacket::new)
                 .consumer(TutorialServerboundPacket::handle).add();
+
+        INSTANCE.messageBuilder(AllianceAddPacket.class, index++)
+                .encoder(AllianceAddPacket::toBytes)
+                .decoder(AllianceAddPacket::new)
+                .consumerMainThread(AllianceAddPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(AllianceRemovePacket.class, index++)
+                .encoder(AllianceRemovePacket::toBytes)
+                .decoder(AllianceRemovePacket::new)
+                .consumerMainThread(AllianceRemovePacket::handle)
+                .add();
+        /*INSTANCE.messageBuilder(AllianceResetPacket.class, index++)
+                .consumerMainThread(AllianceResetPacket::handle)
+                .add();
+
+         */
     }
 }

@@ -178,57 +178,63 @@ public class MiscUtil {
     }
 
     public static Mob findClosestAttackableUnit(Mob unitMob, float range, ServerLevel level) {
-        List<Mob> nearbyMobs = MiscUtil.getEntitiesWithinRange(
-                new Vector3d(unitMob.position().x, unitMob.position().y, unitMob.position().z),
-                range,
-                Mob.class,
-                level);
+        Vector3d unitPosition = new Vector3d(unitMob.position().x, unitMob.position().y, unitMob.position().z);
+        List<Mob> nearbyMobs = MiscUtil.getEntitiesWithinRange(unitPosition, range, Mob.class, level);
 
-        List<Mob> nearbyHostileMobs = new ArrayList<>();
-
-        for (Mob tMob : nearbyMobs) {
-            Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, tMob);
-            // don't let melee units aggro against flying units
-            if (tMob instanceof Unit unit && unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
-                    unitMob instanceof AttackerUnit attackerUnit && attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal)
-                continue;
-
-            boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
-
-            boolean canAttackNeutral =
-                    rs == Relationship.NEUTRAL &&
-                    neutralAggro && !(tMob instanceof Vex) &&
-                    !ResourceSources.isHuntableAnimal(tMob);
-
-            if ((rs == Relationship.HOSTILE || canAttackNeutral) &&
-                tMob.getId() != unitMob.getId() && hasLineOfSightForAttacks(unitMob, tMob))
-                nearbyHostileMobs.add(tMob);
-        }
-        // find the closest mob
         double closestDist = range;
         Mob closestMob = null;
-        for (Mob pfMob : nearbyHostileMobs) {
-            double dist = unitMob.position().distanceTo(pfMob.position());
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestMob = pfMob;
+        boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
+
+        for (Mob tMob : nearbyMobs) {
+            if (isAttackable(unitMob, tMob, neutralAggro) && hasLineOfSightForAttacks(unitMob, tMob)) {
+                double dist = unitMob.position().distanceTo(tMob.position());
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestMob = tMob;
+                }
             }
         }
         return closestMob;
     }
 
+
+    private static boolean isAttackable(Mob unitMob, Mob tMob, boolean neutralAggro) {
+        Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, tMob);
+
+        // If the relationship is FRIENDLY, do not allow the attack
+        if (rs == Relationship.FRIENDLY) {
+            return false;
+        }
+
+        // Prevents certain attacks based on specific unit and goal conditions
+        if (tMob instanceof Unit unit &&
+                unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
+                unitMob instanceof AttackerUnit attackerUnit &&
+                attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
+            return false;
+        }
+
+        // Checks if neutral units can be attacked based on neutralAggro flag and other conditions
+        boolean canAttackNeutral =
+                rs == Relationship.NEUTRAL && neutralAggro &&
+                        !(tMob instanceof Vex) &&
+                        !ResourceSources.isHuntableAnimal(tMob);
+
+        return (rs == Relationship.HOSTILE || canAttackNeutral) &&
+                tMob.getId() != unitMob.getId();
+    }
+
+
     public static Building findClosestAttackableBuilding(Mob unitMob, float range, ServerLevel level) {
-        List<Building> buildings;
-        if (unitMob.level.isClientSide())
-            buildings = BuildingClientEvents.getBuildings();
-        else
-            buildings = BuildingServerEvents.getBuildings();
+        List<Building> buildings = unitMob.level.isClientSide() ?
+                BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
 
         double closestDist = range;
         Building closestBuilding = null;
+
         for (Building building : buildings) {
-            if (unitMob instanceof Unit unit && !unit.getOwnerName().equals(building.ownerName) &&
-                !building.ownerName.isBlank()) {
+            // Check if the building is attackable, taking into account the relationship
+            if (isBuildingAttackable(unitMob, building)) {
                 BlockPos attackPos = building.getClosestGroundPos(unitMob.getOnPos(), 1);
                 double dist = Math.sqrt(unitMob.getOnPos().distSqr(attackPos));
                 if (dist < closestDist) {
@@ -239,6 +245,20 @@ public class MiscUtil {
         }
         return closestBuilding;
     }
+
+    private static boolean isBuildingAttackable(Mob unitMob, Building building) {
+        // Get the relationship between the unit and the building's owner
+        Relationship relationship = UnitServerEvents.getUnitToBuildingRelationship((Unit) unitMob, building);
+
+        // If the relationship is FRIENDLY, do not allow the attack
+        if (relationship == Relationship.FRIENDLY) {
+            return false;
+        }
+
+        // Additional attack conditions for hostile or neutral relationships can be added here
+        return relationship == Relationship.HOSTILE;
+    }
+
 
     private static boolean hasLineOfSightForAttacks(Mob mob, Mob targetMob) {
         return mob.hasLineOfSight(targetMob) || mob instanceof GhastUnit ||

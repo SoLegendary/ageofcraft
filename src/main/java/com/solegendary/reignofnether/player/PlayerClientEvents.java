@@ -10,6 +10,8 @@ import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.registrars.SoundRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.resources.ResourcesClientEvents;
+import com.solegendary.reignofnether.unit.AllianceSystem;
+import com.solegendary.reignofnether.unit.AllyCommand;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -222,7 +224,8 @@ public class PlayerClientEvents {
 
     public static void resetRTS() {
         isRTSPlayer = false;
-
+        AllyCommand.pendingAlliances.clear();
+        //AllianceSystem.resetAlliances();
         HudClientEvents.controlGroups.clear();
         UnitClientEvents.getSelectedUnits().clear();
         UnitClientEvents.getPreselectedUnits().clear();

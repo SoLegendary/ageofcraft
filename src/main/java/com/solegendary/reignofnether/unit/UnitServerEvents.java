@@ -5,6 +5,7 @@ import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.building.buildings.monsters.SculkCatalyst;
+import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.IronGolemBuilding;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
@@ -152,6 +153,24 @@ public class UnitServerEvents {
                 }
         return currentPopulation;
     }
+    public static Relationship getUnitToBuildingRelationship(Unit unit, Building building) {
+        String unitOwnerName = unit.getOwnerName();
+        String buildingOwnerName = building.ownerName;
+
+        if (building instanceof AbstractBridge) {
+            return Relationship.NEUTRAL;
+        }
+        if (unitOwnerName.equals(buildingOwnerName)) {
+            return Relationship.OWNED;
+        } else if (AllianceSystem.isAllied(unitOwnerName, buildingOwnerName)) {
+            return Relationship.FRIENDLY;
+
+
+        } else {
+            return Relationship.HOSTILE;
+        }
+    }
+
 
     // manually provide all the variables required to do unit actions
     public static void addActionItem(
@@ -175,25 +194,63 @@ public class UnitServerEvents {
             );
         }
     }
-
+/*
     // similar to UnitClientEvents getUnitRelationship: given a Unit and Entity, what is the relationship between them
     public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
         String ownerName1 = unit.getOwnerName();
         String ownerName2 = "";
 
-        if (entity instanceof Player player)
+        if (entity instanceof Player player) {
             ownerName2 = player.getName().getString();
-        else if (entity instanceof Unit)
-            ownerName2 = ((Unit) entity).getOwnerName();
-        else
-            return Relationship.NEUTRAL;
 
+            // Get the player who owns the unit by name
+            Player ownerPlayer = player.getServer().getPlayerList().getPlayerByName(ownerName1);
+
+            if (ownerPlayer != null && ownerPlayer.getTeam() != null && ownerPlayer.getTeam().isAlliedTo(player.getTeam())) {
+                return Relationship.FRIENDLY;
+            }
+        } else if (entity instanceof Unit) {
+            ownerName2 = ((Unit) entity).getOwnerName();
+        } else {
+            return Relationship.NEUTRAL;
+        }
+
+        // Check if both have the same owner name if no team match is found
         if (ownerName1.equals(ownerName2)) {
             return Relationship.FRIENDLY;
-        }
-        else
+        } else {
             return Relationship.HOSTILE;
+        }
     }
+
+*/
+
+        public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
+            String ownerName1 = unit.getOwnerName();
+            String ownerName2 = "";
+
+            if (entity instanceof Player player) {
+                ownerName2 = player.getName().getString();
+            } else if (entity instanceof Unit) {
+                ownerName2 = ((Unit) entity).getOwnerName();
+            } else {
+                return Relationship.NEUTRAL;
+            }
+
+
+            // Check if the owners are allied first
+            if (AllianceSystem.isAllied(ownerName1, ownerName2)) {
+                return Relationship.FRIENDLY;
+            }
+            // If not allied, check if the owners are the same
+            if (ownerName1.equals(ownerName2)) {
+                return Relationship.FRIENDLY;
+            } else {
+                return Relationship.HOSTILE;
+            }
+        }
+
+
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent evt) {
