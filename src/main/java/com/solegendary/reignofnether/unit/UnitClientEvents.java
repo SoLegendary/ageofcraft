@@ -186,11 +186,14 @@ public class UnitClientEvents {
             actionItem.action(MC.level);
 
             PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
-                MC.player.getName().getString(),
-                action, unitId, unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
+                    MC.player.getName().getString(),
+                    action,
+                    unitId,
+                    unitIds,
+                    preselectedBlockPos,
+                    selectedBuildingPos
             ));
+
         }
     }
 
@@ -228,13 +231,14 @@ public class UnitClientEvents {
             actionItem.action(MC.level);
 
             PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
-                MC.player.getName().getString(),
-                action,
-                preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
-                bp,
-                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
+                    MC.player.getName().getString(),
+                    action,
+                    !preselectedUnits.isEmpty() ? preselectedUnits.get(0).getId() : -1,
+                    selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                    bp,
+                    HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             ));
+
         }
     }
 

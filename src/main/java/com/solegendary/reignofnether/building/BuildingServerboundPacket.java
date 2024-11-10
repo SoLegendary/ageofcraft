@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
@@ -116,59 +117,76 @@ public class BuildingServerboundPacket {
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         final var success = new AtomicBoolean(false);
         ctx.get().enqueueWork(() -> {
+            // Retrieve the authenticated player from the network context
+            ServerPlayer player = ctx.get().getSender();
 
-            Building building = null;
-            if (!List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action)) {
-                building = findBuilding(false, this.buildingPos);
-                if (building == null)
-                    return;
-            }
-            switch (this.action) {
-                case PLACE -> {
-                    BuildingServerEvents.placeBuilding(this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, false, isDiagonalBridge);
-                }
-                case PLACE_AND_QUEUE -> {
-                    BuildingServerEvents.placeBuilding(this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, true, isDiagonalBridge);
-                }
-                case DESTROY -> {
-                    BuildingServerEvents.cancelBuilding(building);
-                }
-                case SET_RALLY_POINT -> {
-                    if (building instanceof ProductionBuilding productionBuilding)
-                        productionBuilding.setRallyPoint(rallyPos);
-                }
-                case SET_RALLY_POINT_ENTITY -> {
-                    if (building instanceof ProductionBuilding productionBuilding) {
-                        Entity e = building.level.getEntity(this.builderUnitIds[0]);
-                        if (e instanceof LivingEntity le)
-                            productionBuilding.setRallyPointEntity(le);
+            // Verify that the provided ownerName matches the authenticated player's username
+            if (player != null && player.getGameProfile().getName().equals(this.ownerName)) {
+
+                Building building = null;
+                if (!List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action)) {
+                    building = findBuilding(false, this.buildingPos);
+                    if (building == null) {
+                        System.out.println("Building not found for action: " + this.action);
+                        return;
                     }
                 }
-                case START_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.startProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos);
-                    if (prodSuccess)
-                        BuildingClientboundPacket.startProduction(buildingPos, itemName);
+
+                // Process actions based on the action type
+                switch (this.action) {
+                    case PLACE -> BuildingServerEvents.placeBuilding(
+                            this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, false, isDiagonalBridge);
+                    case PLACE_AND_QUEUE -> BuildingServerEvents.placeBuilding(
+                            this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, true, isDiagonalBridge);
+                    case DESTROY -> BuildingServerEvents.cancelBuilding(building);
+                    case SET_RALLY_POINT -> {
+                        if (building instanceof ProductionBuilding productionBuilding) {
+                            productionBuilding.setRallyPoint(rallyPos);
+                        }
+                    }
+                    case SET_RALLY_POINT_ENTITY -> {
+                        if (building instanceof ProductionBuilding productionBuilding) {
+                            Entity e = building.level.getEntity(this.builderUnitIds[0]);
+                            if (e instanceof LivingEntity le) {
+                                productionBuilding.setRallyPointEntity(le);
+                            }
+                        }
+                    }
+                    case START_PRODUCTION -> {
+                        boolean prodSuccess = ProductionBuilding.startProductionItem(
+                                ((ProductionBuilding) building), this.itemName, this.buildingPos);
+                        if (prodSuccess) {
+                            BuildingClientboundPacket.startProduction(buildingPos, itemName);
+                        }
+                    }
+                    case CANCEL_PRODUCTION -> {
+                        boolean prodSuccess = ProductionBuilding.cancelProductionItem(
+                                ((ProductionBuilding) building), this.itemName, this.buildingPos, true);
+                        if (prodSuccess) {
+                            BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
+                        }
+                    }
+                    case CANCEL_BACK_PRODUCTION -> {
+                        boolean prodSuccess = ProductionBuilding.cancelProductionItem(
+                                ((ProductionBuilding) building), this.itemName, this.buildingPos, false);
+                        if (prodSuccess) {
+                            BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
+                        }
+                    }
+                    case CHECK_STOCKPILE_CHEST -> {
+                        if (building instanceof AbstractStockpile ||
+                                building instanceof Portal portal && portal.portalType == Portal.PortalType.CIVILIAN) {
+                            AbstractStockpile.checkAndConsumeChestItems(building);
+                        }
+                    }
+                    case REQUEST_REPLACEMENT -> BuildingServerEvents.replaceClientBuilding(buildingPos);
                 }
-                case CANCEL_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, true);
-                    if (prodSuccess)
-                        BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
-                }
-                case CANCEL_BACK_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, false);
-                    if (prodSuccess)
-                        BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
-                }
-                case CHECK_STOCKPILE_CHEST -> {
-                    if (building instanceof AbstractStockpile ||
-                        building instanceof Portal portal && portal.portalType == Portal.PortalType.CIVILIAN)
-                        AbstractStockpile.checkAndConsumeChestItems(building);
-                }
-                case REQUEST_REPLACEMENT -> {
-                    BuildingServerEvents.replaceClientBuilding(buildingPos);
-                }
+                success.set(true);
+            } else {
+                // Log or handle the packet rejection due to mismatched or unauthenticated ownerName
+                System.out.println("Packet rejected: ownerName mismatch for player " +
+                        (player != null ? player.getGameProfile().getName() : "Unknown"));
             }
-            success.set(true);
         });
         ctx.get().setPacketHandled(true);
         return success.get();
