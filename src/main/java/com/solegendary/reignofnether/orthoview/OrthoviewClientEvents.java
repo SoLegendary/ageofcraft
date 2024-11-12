@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.minimap.MinimapClientEvents;
 import com.solegendary.reignofnether.player.PlayerServerboundPacket;
+import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.util.MiscUtil;
@@ -106,6 +107,14 @@ public class OrthoviewClientEvents {
             int sumHeights = 0;
             int count = 0;
 
+            // Retrieve the min and max camera Y settings from the level's GameRules
+            int minCameraY = MC.level.getGameRules().getInt(GameRuleRegistrar.MIN_CAMERA_Y);
+            int maxCameraY = MC.level.getGameRules().getInt(GameRuleRegistrar.MAX_CAMERA_Y);
+
+            // Determine if we should enforce min and max Y constraints
+            boolean enforceMinCameraY = minCameraY < 1000;
+            boolean enforceMaxCameraY = maxCameraY < 1000;
+
             // Iterate through a square area around the player
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
@@ -116,14 +125,19 @@ public class OrthoviewClientEvents {
                     count++;
                 }
             }
+
             // Calculate the average height
             int avgHeight = count > 0 ? sumHeights / count : playerPos.getY();
 
-            // Update ORTHOVIEW values based on the average height
-            ORTHOVIEW_PLAYER_BASE_Y = Math.max(avgHeight + 40, 0);
-            ORTHOVIEW_PLAYER_MAX_Y = avgHeight + 100;
+            // Apply the min Y constraint if enforced
+            ORTHOVIEW_PLAYER_BASE_Y = Math.max(avgHeight + 40, enforceMinCameraY ? minCameraY : 0);
+
+            // Apply the max Y constraint if enforced
+            ORTHOVIEW_PLAYER_MAX_Y = enforceMaxCameraY ? Math.min(avgHeight + 100, maxCameraY) : avgHeight + 100;
         }
     }
+
+
 
     public static boolean isEnabled() {
         return enabled;
