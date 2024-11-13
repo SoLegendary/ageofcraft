@@ -59,6 +59,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.solegendary.reignofnether.hud.buttons.HelperButtons.*;
 import static com.solegendary.reignofnether.tutorial.TutorialClientEvents.helpButton;
@@ -106,27 +107,23 @@ public class HudClientEvents {
 
     // sets the
     public static void setLowestCdHudEntity() {
-        if (UnitClientEvents.getSelectedUnits().isEmpty() || hudSelectedEntity == null) {
+        List<LivingEntity> selectedUnits = UnitClientEvents.getSelectedUnits();
+
+        if (selectedUnits.isEmpty() || hudSelectedEntity == null) {
             return;
         }
 
-        List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
-            int totalCd = 0;
-            if (le instanceof Unit unit) {
-                for (Ability ability : unit.getAbilities())
-                    totalCd += ability.getCooldown();
-            }
-            return new Pair<>(le, totalCd);
-        }).filter(p -> {
-            String str1 = getModifiedEntityName(p.getFirst());
-            String str2 = getModifiedEntityName(hudSelectedEntity);
-            return str1.equals(str2);
-        }).sorted(Comparator.comparing(Pair::getSecond)).toList();
+        String selectedEntityName = getModifiedEntityName(hudSelectedEntity);
 
-        if (!pairs.isEmpty()) {
-            setHudSelectedEntity(pairs.get(0).getFirst());
-        }
+        selectedUnits.stream()
+                .filter(unit -> getModifiedEntityName(unit).equals(selectedEntityName) && unit instanceof Unit)
+                .map(unit -> new Pair<>(unit, ((Unit) unit).getAbilities().stream()
+                        .mapToInt(Ability::getCooldown)
+                        .sum()))
+                .min(Comparator.comparing(Pair::getSecond))
+                .ifPresent(pair -> setHudSelectedEntity(pair.getFirst()));
     }
+
 
     public static void setHudSelectedEntity(LivingEntity entity) {
         hudSelectedEntity = entity;
@@ -134,60 +131,66 @@ public class HudClientEvents {
 
     // eg. entity.reignofnether.zombie_unit -> zombie
     public static String getSimpleEntityName(Entity entity) {
+        String name = entity.getName().getString();
+
         if (entity instanceof Unit) {
-            if (entity.hasCustomName()) {
-                return entity.getType()
-                    .getDescription()
-                    .getString()
-                    .replace(" ", "")
-                    .replace("entity.reignofnether.", "")
-                    .replace("_unit", "")
-                    .replace(".none", "");
-            } else {
-                return entity.getName()
-                    .getString()
-                    .replace(" ", "")
-                    .replace("entity.reignofnether.", "")
-                    .replace("_unit", "")
-                    .replace(".none", "");
-            }
-        } else {
-            return entity.getName().getString();
+            name = entity.hasCustomName() ? entity.getType().getDescription().getString() : name;
+            name = cleanEntityName(name);
         }
+
+        return name;
     }
 
-    // not to be used for resource paths
+    // Cleans up common prefixes, suffixes, and unnecessary characters in entity names
+    private static String cleanEntityName(String name) {
+        return name.replace(" ", "")
+                .replace("entity.reignofnether.", "")
+                .replace("_unit", "")
+                .replace(".none", "");
+    }
+
+    // Modified entity name with additional details (e.g., banner, passenger)
     public static String getModifiedEntityName(Entity entity) {
         String name = getSimpleEntityName(entity);
+        name = addBannerSuffix((LivingEntity) entity, name);
+        name = addPassengerSuffix(entity, name);
+        return name;
+    }
 
-        ItemStack itemStack = ((LivingEntity) entity).getItemBySlot(EquipmentSlot.HEAD);
-
+    // Adds "Captain" suffix for units with a banner item on the head
+    private static String addBannerSuffix(LivingEntity entity, String name) {
+        ItemStack itemStack = entity.getItemBySlot(EquipmentSlot.HEAD);
         if (itemStack.getItem() instanceof BannerItem) {
-            entity.setItemSlot(EquipmentSlot.HEAD, itemStack);
             name += " " + I18n.get("units.reignofnether.captain");
-        }
-        if (entity.getPassengers().size() == 1) {
-            Entity passenger = entity.getPassengers().get(0);
-            if (entity instanceof RavagerUnit && passenger instanceof PillagerUnit) {
-                name = I18n.get("units.reignofnether.ravager_artillery");
-            } else if (entity instanceof SpiderUnit && (
-                passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
-            )) {
-                name = I18n.get("units.reignofnether.spider_jockey");
-            } else if (entity instanceof PoisonSpiderUnit && (
-                passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
-            )) {
-                name = I18n.get("units.reignofnether.poison_spider_jockey");
-            } else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
-                name = I18n.get("units.reignofnether.hoglin_rider");
-            } else {
-                String pName = getSimpleEntityName(entity.getPassengers().get(0)).replace("_", " ");
-                String nameCap = pName.substring(0, 1).toUpperCase() + pName.substring(1);
-                name += " & " + nameCap;
-            }
         }
         return name;
     }
+
+    // Adds appropriate suffix based on the entity's passenger, if any
+    private static String addPassengerSuffix(Entity entity, String name) {
+        if (entity.getPassengers().size() != 1) {
+            return name;
+        }
+
+        Entity passenger = entity.getPassengers().get(0);
+
+        // Special combinations
+        if (entity instanceof RavagerUnit && passenger instanceof PillagerUnit) {
+            return I18n.get("units.reignofnether.ravager_artillery");
+        } else if (entity instanceof SpiderUnit && (passenger instanceof SkeletonUnit || passenger instanceof StrayUnit)) {
+            return I18n.get("units.reignofnether.spider_jockey");
+        } else if (entity instanceof PoisonSpiderUnit && (passenger instanceof SkeletonUnit || passenger instanceof StrayUnit)) {
+            return I18n.get("units.reignofnether.poison_spider_jockey");
+        } else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
+            return I18n.get("units.reignofnether.hoglin_rider");
+        }
+
+        // Default combination name
+        String passengerName = getSimpleEntityName(passenger).replace("_", " ");
+        String passengerNameCap = passengerName.substring(0, 1).toUpperCase() + passengerName.substring(1);
+        return name + " & " + passengerNameCap;
+    }
+
 
     public static void showTemporaryMessage(String msg) {
         showTemporaryMessage(msg, TEMP_MSG_TICKS_MAX);
@@ -516,71 +519,63 @@ public class HudClientEvents {
         // --------------------------
         // Unit head portrait + stats
         // --------------------------
-        else if (hudSelectedEntity != null && portraitRendererUnit.model != null
-            && portraitRendererUnit.renderer != null) {
+        else if (hudSelectedEntity != null && portraitRendererUnit.model != null && portraitRendererUnit.renderer != null) {
 
+            // Adjust `blitY` by dynamically computed frame height
             blitY -= portraitRendererUnit.frameHeight;
 
-            // write capitalised unit name
+            // Get capitalized entity name
             String name = getModifiedEntityName(hudSelectedEntity).replace("_", " ");
             if (hudSelectedEntity.hasCustomName()) {
                 name = hudSelectedEntity.getCustomName().getString();
             }
-
             String nameCap = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-            unitPortraitZone = portraitRendererUnit.render(evt.getPoseStack(),
-                nameCap,
-                blitX,
-                blitY,
-                hudSelectedEntity
-            );
+            // Render entity portrait with dynamic frame and size adjustments
+            unitPortraitZone = portraitRendererUnit.render(evt.getPoseStack(), nameCap, blitX, blitY, hudSelectedEntity);
             hudZones.add(unitPortraitZone);
 
+            // Adjust `blitX` to the right of the portrait frame dynamically
             blitX += portraitRendererUnit.frameWidth;
 
             if (hudSelectedEntity instanceof Unit unit) {
                 hudZones.add(portraitRendererUnit.renderStats(evt.getPoseStack(), nameCap, blitX, blitY, unit));
 
+                // Adjust for stats width based on dynamic entity size
                 blitX += portraitRendererUnit.statsWidth;
 
                 int totalRes = Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue();
 
                 if (hudSelectedEntity instanceof Mob mob && mob.canPickUpLoot() && totalRes > 0) {
-                    hudZones.add(portraitRendererUnit.renderResourcesHeld(evt.getPoseStack(),
-                        nameCap,
-                        blitX,
-                        blitY,
-                        unit
-                    ));
+                    hudZones.add(portraitRendererUnit.renderResourcesHeld(evt.getPoseStack(), nameCap, blitX, blitY, unit));
 
-                    // return button
+                    // Add "Return Resources" button if entity relationship is OWNED
                     if (getPlayerToEntityRelationship(hudSelectedEntity) == Relationship.OWNED) {
                         Button returnButton = new Button("Return resources",
-                            Button.itemIconSize,
-                            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/chest.png"),
-                            Keybindings.keyD,
-                            () -> unit.getReturnResourcesGoal().getBuildingTarget() != null,
-                            () -> false,
-                            () -> true,
-                            () -> sendUnitCommand(UnitAction.RETURN_RESOURCES_TO_CLOSEST),
-                            null,
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.drop_off_resources"),
-                                Style.EMPTY
-                            ))
+                                Button.itemIconSize,
+                                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/chest.png"),
+                                Keybindings.keyD,
+                                () -> unit.getReturnResourcesGoal().getBuildingTarget() != null,
+                                () -> false,
+                                () -> true,
+                                () -> sendUnitCommand(UnitAction.RETURN_RESOURCES_TO_CLOSEST),
+                                null,
+                                List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.drop_off_resources"), Style.EMPTY))
                         );
                         returnButton.render(evt.getPoseStack(), blitX + 10, blitY + 38, mouseX, mouseY);
                         renderedButtons.add(returnButton);
                     }
                 }
             }
-            if (hudSelectedEntity instanceof Unit unit
-                && Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue() > 0) {
+
+            // Add a conditional offset to `blitX` for resources if present
+            if (hudSelectedEntity instanceof Unit unit && Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue() > 0) {
                 blitX += portraitRendererUnit.statsWidth + 5;
             } else {
                 blitX += 15;
             }
         }
+
 
         // ----------------------------------------------
         // Unit icons to select types and show healthbars
@@ -713,27 +708,29 @@ public class HudClientEvents {
 
 
             if (hudSelectedEntity instanceof AttackerUnit) {
-                actionButtons.add(ActionButtons.ATTACK);
+                actionButtons.add(ActionButtons.getButtonByName("Attack"));
             }
             if (hudSelectedEntity instanceof WorkerUnit) {
-                actionButtons.add(ActionButtons.BUILD_REPAIR);
-                actionButtons.add(ActionButtons.GATHER);
+                actionButtons.add(ActionButtons.getButtonByName("Build/Repair"));
+                actionButtons.add(ActionButtons.getButtonByName("Gather"));
             }
             if (unit.canGarrison() && GarrisonableBuilding.getGarrison(unit) == null) {
-                actionButtons.add(ActionButtons.GARRISON);
+                actionButtons.add(ActionButtons.getButtonByName("Garrison"));
             } else if (GarrisonableBuilding.getGarrison(unit) != null) {
-                actionButtons.add(ActionButtons.UNGARRISON);
+                actionButtons.add(ActionButtons.getButtonByName("Ungarrison"));
             }
 
             if (!(hudSelectedEntity instanceof WorkerUnit)) {
-                actionButtons.add(ActionButtons.HOLD);
+                actionButtons.add(ActionButtons.getButtonByName("Hold Position"));
             }
-            actionButtons.add(ActionButtons.STOP);
+            actionButtons.add(ActionButtons.getButtonByName("Stop"));
+
 
             for (Button actionButton : actionButtons) {
 
                 // GATHER button does not have a static icon
-                if (actionButton == ActionButtons.GATHER && hudSelectedEntity instanceof WorkerUnit workerUnit) {
+                Button gatherButton = ActionButtons.getButtonByName("Gather");
+                if (actionButton == gatherButton && hudSelectedEntity instanceof WorkerUnit workerUnit) {
                     switch (workerUnit.getGatherResourceGoal().getTargetResourceName()) {
                         case NONE -> actionButton.iconResource = new ResourceLocation(ReignOfNether.MOD_ID,
                             "textures/icons/items/no_gather.png"
@@ -1086,34 +1083,41 @@ public class HudClientEvents {
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
-            if (!StartButtons.villagerStartButton.isHidden.get()) {
-                StartButtons.villagerStartButton.render(evt.getPoseStack(),
-                    screenWidth - (StartButtons.ICON_SIZE * 6),
-                    StartButtons.ICON_SIZE / 2,
-                    mouseX,
-                    mouseY
+            Button villagerButton = StartButtons.getButtonByName("Villagers");
+            Button monsterButton = StartButtons.getButtonByName("Monsters");
+            Button piglinButton = StartButtons.getButtonByName("Piglins");
+
+            if (villagerButton != null && !villagerButton.isHidden.get()) {
+                villagerButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 6),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
                 );
-                renderedButtons.add(StartButtons.villagerStartButton);
+                renderedButtons.add(villagerButton);
             }
-            if (!StartButtons.monsterStartButton.isHidden.get()) {
-                StartButtons.monsterStartButton.render(evt.getPoseStack(),
-                    (int) (screenWidth - (StartButtons.ICON_SIZE * 4f)),
-                    StartButtons.ICON_SIZE / 2,
-                    mouseX,
-                    mouseY
+
+            if (monsterButton != null && !monsterButton.isHidden.get()) {
+                monsterButton.render(evt.getPoseStack(),
+                        (int) (screenWidth - (StartButtons.ICON_SIZE * 4f)),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
                 );
-                renderedButtons.add(StartButtons.monsterStartButton);
+                renderedButtons.add(monsterButton);
             }
-            if (!StartButtons.piglinStartButton.isHidden.get()) {
-                StartButtons.piglinStartButton.render(evt.getPoseStack(),
-                    screenWidth - (StartButtons.ICON_SIZE * 2),
-                    StartButtons.ICON_SIZE / 2,
-                    mouseX,
-                    mouseY
+
+            if (piglinButton != null && !piglinButton.isHidden.get()) {
+                piglinButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 2),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
                 );
-                renderedButtons.add(StartButtons.piglinStartButton);
+                renderedButtons.add(piglinButton);
             }
         }
+
 
         // --------------------
         // Tutorial Help button
@@ -1191,17 +1195,23 @@ public class HudClientEvents {
 
     @SubscribeEvent
     public static void onMousePress(ScreenEvent.MouseButtonPressed.Post evt) {
+        int mouseX = (int) evt.getMouseX();
+        int mouseY = (int) evt.getMouseY();
+        boolean isLeftClick = evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1;
 
-        for (Button button : renderedButtons) {
-            if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1) {
-                button.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), true);
-            } else if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_2) {
-                button.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), false);
-            }
+        // Handle button clicks
+        handleButtonClicks(mouseX, mouseY, isLeftClick);
+
+        // Record mouse position on left click
+        if (isLeftClick) {
+            mouseLeftDownX = mouseX;
+            mouseLeftDownY = mouseY;
         }
-        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1) {
-            mouseLeftDownX = (int) evt.getMouseX();
-            mouseLeftDownY = (int) evt.getMouseY();
+    }
+
+    private static void handleButtonClicks(int mouseX, int mouseY, boolean isLeftClick) {
+        for (Button button : renderedButtons) {
+            button.checkClicked(mouseX, mouseY, isLeftClick);
         }
     }
 
@@ -1277,79 +1287,107 @@ public class HudClientEvents {
             return;
         }
 
-        // Prevent spectator mode options from showing up
-        if (OrthoviewClientEvents.isEnabled()) {
-            for (Keybinding numKey : Keybindings.nums)
-                if (numKey.key == evt.getKeyCode()) {
-                    evt.setCanceled(true);
-                }
+        // Check if spectator mode options should be prevented
+        if (OrthoviewClientEvents.isEnabled() && isNumKeyPressed(evt)) {
+            evt.setCanceled(true);
         }
 
-        // Deselect everything
+        // Handle deselection
         if (evt.getKeyCode() == Keybindings.deselect.key) {
-            UnitClientEvents.clearSelectedUnits();
-            BuildingClientEvents.clearSelectedBuildings();
-            BuildingClientEvents.setBuildingToPlace(null);
+            deselectAll();
         }
 
-        // Initialize controlGroups with empty arrays if not already initialized
-        if (controlGroups.size() < Keybindings.nums.length) {
-            controlGroups.clear(); // Clear in case of a previous partial initialization
-            for (Keybinding keybinding : Keybindings.nums) {
-                controlGroups.add(new ControlGroup());
-            }
-        }
+        // Initialize control groups if not already done
+        initializeControlGroups();
 
-        // Access and save to controlGroups if index is within bounds
-        for (Keybinding keybinding : Keybindings.nums) {
-            int index = Integer.parseInt(keybinding.buttonLabel);
-            if (index >= 0 && index < controlGroups.size()) {  // Bounds check
-                if (Keybindings.ctrlMod.isDown() && evt.getKeyCode() == keybinding.key) {
-                    controlGroups.get(index).saveFromSelected(keybinding);
-                }
-            }
-        }
+        // Save to control groups if needed
+        handleControlGroupSave(evt);
 
-        // Open chat while orthoview is enabled
+        // Open chat when Orthoview is enabled
         if (OrthoviewClientEvents.isEnabled() && evt.getKeyCode() == Keybindings.chat.key) {
             MC.setScreen(new ChatScreen(""));
         }
 
         // Cycle through selected units
         if (evt.getKeyCode() == Keybindings.tab.key) {
-            List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
-                .filter(e -> e instanceof Unit)
-                .sorted(Comparator.comparing(HudClientEvents::getSimpleEntityName))
-                .toList());
+            cycleSelectedUnits();
+        }
+    }
 
-            if (entities.isEmpty())
-                return;
+    private static boolean isNumKeyPressed(ScreenEvent.KeyPressed.KeyPressed.Pre evt) {
+        return Arrays.stream(Keybindings.nums)
+                .anyMatch(numKey -> numKey.key == evt.getKeyCode());
+    }
 
-            if (Keybindings.shiftMod.isDown()) {
-                Collections.reverse(entities);
-            }
+    private static void deselectAll() {
+        UnitClientEvents.clearSelectedUnits();
+        BuildingClientEvents.clearSelectedBuildings();
+        BuildingClientEvents.setBuildingToPlace(null);
+    }
 
-            if (hudSelectedEntity != null) {
-                String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
-                String lastEntityName = "";
-                boolean cycled = false;
-                for (LivingEntity entity : entities) {
-                    String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
-                    if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
-                        HudClientEvents.setHudSelectedEntity(entity);
-                        cycled = true;
-                        break;
-                    }
-                    lastEntityName = currentEntityName;
-                }
-                if (!cycled) {
-                    HudClientEvents.setHudSelectedEntity(entities.get(0));
-                } else {
-                    HudClientEvents.setLowestCdHudEntity();
-                }
+    private static void initializeControlGroups() {
+        if (controlGroups.size() < Keybindings.nums.length) {
+            controlGroups.clear();
+            for (Keybinding keybinding : Keybindings.nums) {
+                controlGroups.add(new ControlGroup());
             }
         }
     }
+
+    private static void handleControlGroupSave(ScreenEvent.KeyPressed.KeyPressed.Pre evt) {
+        for (Keybinding keybinding : Keybindings.nums) {
+            int index = Integer.parseInt(keybinding.buttonLabel);
+            if (index >= 0 && index < controlGroups.size() &&
+                    Keybindings.ctrlMod.isDown() && evt.getKeyCode() == keybinding.key) {
+                controlGroups.get(index).saveFromSelected(keybinding);
+            }
+        }
+    }
+
+    private static void cycleSelectedUnits() {
+        List<LivingEntity> entities = getSelectedUnits().stream()
+                .filter(e -> e instanceof Unit)
+                .sorted(Comparator.comparing(HudClientEvents::getSimpleEntityName))
+                .collect(Collectors.toList());
+
+        if (entities.isEmpty()) {
+            return;
+        }
+
+        if (Keybindings.shiftMod.isDown()) {
+            Collections.reverse(entities);
+        }
+
+        setNextHudSelectedEntity(entities);
+    }
+
+    private static void setNextHudSelectedEntity(List<LivingEntity> entities) {
+        if (hudSelectedEntity == null) {
+            HudClientEvents.setHudSelectedEntity(entities.get(0));
+            return;
+        }
+
+        String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
+        String lastEntityName = "";
+        boolean cycled = false;
+
+        for (LivingEntity entity : entities) {
+            String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
+            if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
+                HudClientEvents.setHudSelectedEntity(entity);
+                cycled = true;
+                break;
+            }
+            lastEntityName = currentEntityName;
+        }
+
+        if (!cycled) {
+            HudClientEvents.setHudSelectedEntity(entities.get(0));
+        } else {
+            HudClientEvents.setLowestCdHudEntity();
+        }
+    }
+
 
 
     // newUnitIds are replacing oldUnitIds - replace them in every control group while retaining their index
@@ -1357,21 +1395,29 @@ public class HudClientEvents {
         if (MC.level == null) {
             return;
         }
+
+        Set<Integer> oldUnitIdSet = new HashSet<>();
+        for (int id : oldUnitIds) {
+            oldUnitIdSet.add(id);
+        }
+
         for (ControlGroup group : controlGroups) {
+            // First, replace oldUnitIds with newUnitIds
             for (int i = 0; i < oldUnitIds.length; i++) {
+                int oldId = oldUnitIds[i];
+                int newId = newUnitIds[i];
                 for (int j = 0; j < group.entityIds.size(); j++) {
-                    if (group.entityIds.get(j) == oldUnitIds[i]) {
-                        group.entityIds.add(j, newUnitIds[i]);
+                    if (group.entityIds.get(j) == oldId) {
+                        if (!group.entityIds.contains(newId)) {
+                            group.entityIds.set(j, newId);
+                        }
                         break;
                     }
                 }
             }
-            for (int i = 0; i < oldUnitIds.length; i++) {
-                for (int j = 0; j < oldUnitIds.length; j++) {
-                    final int k = j;
-                    group.entityIds.removeIf(id -> id == oldUnitIds[k]);
-                }
-            }
+
+            // Remove oldUnitIds
+            group.entityIds.removeIf(oldUnitIdSet::contains);
         }
     }
 }

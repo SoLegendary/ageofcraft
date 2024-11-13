@@ -28,7 +28,7 @@ public class Button {
 
     public static final int itemIconSize = 14;
 
-    public String name;
+    public final String name; // Made `name` final to prevent changes after instantiation
     public int x; // top left
     public int y;
     int iconSize;
@@ -43,23 +43,13 @@ public class Button {
     public LivingEntity entity = null; // for selected unit buttons
     public Building building = null; // for selected building buttons
 
-    /** https://stackoverflow.com/questions/29945627/java-8-lambda-void-argument
-     * Supplier       ()    -> x
-     * Consumer       x     -> ()
-     * Runnable       ()    -> ()
-     * Predicate      x     -> boolean
-     */
-    public Supplier<Boolean> isSelected; // controls selected frame rendering
-    public Supplier<Boolean> isHidden; // special highlighting for an on-state (eg. auto-cast/auto-producing)
-    public Supplier<Boolean> isEnabled; // is the button allowed to be used right now? (eg. off cooldown)
+    public Supplier<Boolean> isSelected;
+    public Supplier<Boolean> isHidden;
+    public Supplier<Boolean> isEnabled;
     public Runnable onLeftClick;
     public Runnable onRightClick;
     public List<FormattedCharSequence> tooltipLines;
 
-    // used for cooldown indication, productionItem progress, etc.
-    // @ 0.0, appears clear and normal
-    // @ 0.5, bottom half is greyed out
-    // @ 1.0, whole button is greyed out
     public float greyPercent = 0.0f;
 
     Minecraft MC = Minecraft.getInstance();
@@ -129,6 +119,11 @@ public class Button {
         this.tooltipLines = tooltipLines;
     }
 
+    // New getter for `name` for use in `getButtonByName`
+    public String getName() {
+        return name;
+    }
+
     public void renderHealthBar(PoseStack poseStack) {
         if (entity != null)
             HealthBarClientEvents.renderForEntity(poseStack, entity,
@@ -156,7 +151,7 @@ public class Button {
                     iconSize
             );
         }
-        // item/unit icon
+
         if (iconResource != null) {
             MyRenderer.renderIcon(
                     poseStack,
@@ -165,10 +160,10 @@ public class Button {
                     iconSize
             );
         }
-        // hotkey letter
+
         if (this.hotkey != null) {
             String hotkeyStr = hotkey.buttonLabel;
-            hotkeyStr = hotkeyStr.substring(0,Math.min(3, hotkeyStr.length()));
+            hotkeyStr = hotkeyStr.substring(0, Math.min(3, hotkeyStr.length()));
             GuiComponent.drawCenteredString(poseStack, MC.font,
                     hotkeyStr,
                     x + iconSize + 8 - (hotkeyStr.length() * 4),
@@ -176,23 +171,22 @@ public class Button {
                     0xFFFFFF);
         }
 
-        // user is holding click or hotkey down over the button and render frame if so
         if (isEnabled.get() && (isSelected.get() || (hotkey != null && hotkey.isDown()) || (isMouseOver(mouseX, mouseY) && MiscUtil.isLeftClickDown(MC)))) {
             ResourceLocation iconFrameSelectedResource = new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame_selected.png");
             MyRenderer.renderIcon(
                     poseStack,
                     iconFrameSelectedResource,
-                    x-1,y-1,
+                    x-1, y-1,
                     iconFrameSelectedSize
             );
         }
-        // light up on hover
+
         if (isEnabled.get() && isMouseOver(mouseX, mouseY)) {
-            GuiComponent.fill(poseStack, // x1,y1, x2,y2,
+            GuiComponent.fill(poseStack,
                     x, y,
                     x + iconFrameSize,
                     y + iconFrameSize,
-                    0x32FFFFFF); //ARGB(hex); note that alpha ranges between ~0-16, not 0-255
+                    0x32FFFFFF);
         }
 
         if (greyPercent > 0 || !isEnabled.get()) {
@@ -200,11 +194,11 @@ public class Button {
             if (!isEnabled.get())
                 greyHeightPx = 0;
 
-            GuiComponent.fill(poseStack, // x1,y1, x2,y2,
+            GuiComponent.fill(poseStack,
                     x, y + greyHeightPx,
                     x + iconFrameSize,
                     y + iconFrameSize,
-                    0x99000000); //ARGB(hex); note that alpha ranges between ~0-16, not 0-255
+                    0x99000000);
         }
     }
 
@@ -220,7 +214,6 @@ public class Button {
         );
     }
 
-    // must be done from mouse press event
     public void checkClicked(int mouseX, int mouseY, boolean leftClick) {
         if (!OrthoviewClientEvents.isEnabled() || !isEnabled.get())
             return;
@@ -229,15 +222,13 @@ public class Button {
             if (leftClick && this.onLeftClick != null) {
                 MC.player.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1.0f);
                 this.onLeftClick.run();
-            }
-            else if (!leftClick && this.onRightClick != null) {
+            } else if (!leftClick && this.onRightClick != null) {
                 MC.player.playSound(SoundEvents.UI_BUTTON_CLICK, 0.2f, 1.0f);
                 this.onRightClick.run();
             }
         }
     }
 
-    // must be done from key press event
     public void checkPressed(int key) {
         if (!OrthoviewClientEvents.isEnabled() || !isEnabled.get())
             return;
@@ -249,3 +240,4 @@ public class Button {
         }
     }
 }
+

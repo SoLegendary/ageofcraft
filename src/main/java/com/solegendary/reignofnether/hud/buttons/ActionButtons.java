@@ -4,6 +4,7 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.hud.HudClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.unit.UnitAction;
@@ -14,111 +15,152 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
-
 import java.util.List;
-
 import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitCommand;
+import java.util.function.Supplier;
 
-// static list of generic unit actions (build, attack, move, stop, etc.)
+import java.util.ArrayList;
+
+import java.util.function.Consumer;
+
 public class ActionButtons {
 
-    public static final Button BUILD_REPAIR = new Button(
-            "Build/Repair",
-            Button.itemIconSize,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/shovel.png"),
-            Keybindings.build,
-            () -> CursorClientEvents.getLeftClickAction() == UnitAction.BUILD_REPAIR,
-            () -> false,
-            () -> true,
-            () -> CursorClientEvents.setLeftClickAction(UnitAction.BUILD_REPAIR),
-            null,
-            List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.build_repair"), Style.EMPTY))
-    );
-    public static final Button GATHER = new Button(
-            "Gather",
-            Button.itemIconSize,
-            null, // changes depending on the gather target
-            Keybindings.gather,
-            () -> UnitClientEvents.getSelectedUnitResourceTarget() != ResourceName.NONE,
-            () -> false,
-            () -> true,
-            () -> sendUnitCommand(UnitAction.TOGGLE_GATHER_TARGET),
-            null,
-            null
-    );
-    public static final Button ATTACK = new Button(
-        "Attack",
-        Button.itemIconSize,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/sword.png"),
-        Keybindings.attack,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.ATTACK,
-        () -> false,
-        () -> true,
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.ATTACK),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.attack"), Style.EMPTY))
-    );
-    public static final Button STOP = new Button(
-        "Stop",
-        Button.itemIconSize,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png"),
-        Keybindings.stop,
-        () -> false, // except if currently clicked on
-        () -> false,
-        () -> true,
-        () -> sendUnitCommand(UnitAction.STOP),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.stop"), Style.EMPTY))
-    );
-    public static final Button HOLD = new Button(
-        "Hold Position",
-        Button.itemIconSize,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/chestplate.png"),
-        Keybindings.hold,
-        () -> {
-            LivingEntity entity = HudClientEvents.hudSelectedEntity;
-            return entity instanceof Unit unit && unit.getHoldPosition();
-        },
-        () -> false,
-        () -> true,
-        () -> sendUnitCommand(UnitAction.HOLD),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.hold_position"), Style.EMPTY))
-    );
-    public static final Button MOVE = new Button(
-        "Move",
-        Button.itemIconSize,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/boots.png"),
-        Keybindings.move,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.MOVE,
-        () -> false,
-        () -> true,
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.MOVE),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.move"), Style.EMPTY))
-    );
-    public static final Button GARRISON = new Button(
-        "Garrison",
-        Button.itemIconSize,
-        new ResourceLocation("minecraft", "textures/block/ladder.png"),
-        Keybindings.garrison,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.GARRISON,
-        () -> false,
-        () -> true,
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.GARRISON),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.garrison"), Style.EMPTY))
-    );
-    public static final Button UNGARRISON = new Button(
-        "Ungarrison",
-        Button.itemIconSize,
-        new ResourceLocation("minecraft", "textures/block/oak_trapdoor.png"),
-        Keybindings.garrison,
-        () -> false,
-        () -> false,
-        () -> true,
-        () -> sendUnitCommand(UnitAction.UNGARRISON),
-        null,
-        List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.ungarrison"), Style.EMPTY))
-    );
+    private static final String MOD_ID = ReignOfNether.MOD_ID;
+    private static final List<Button> BUTTONS = new ArrayList<>();
+    private static final List<Consumer<Button>> buttonAddedListeners = new ArrayList<>();
+    private static final List<Consumer<Button>> buttonRemovedListeners = new ArrayList<>();
+
+    public interface ButtonFactory {
+        Button createButton();
+    }
+
+    private static Button createButton(
+            String name,
+            String texturePath,
+            Keybinding keybinding,
+            Supplier<Boolean> isActive,
+            Runnable onClick,
+            String i18nKey
+    ) {
+        return new Button(
+                name,
+                Button.itemIconSize,
+                texturePath != null ? new ResourceLocation(MOD_ID, texturePath) : null,
+                keybinding,
+                isActive,
+                () -> false,
+                () -> true,
+                onClick,
+                null,
+                List.of(FormattedCharSequence.forward(I18n.get(i18nKey), Style.EMPTY))
+        );
+    }
+
+    public static void addButton(ButtonFactory buttonFactory) {
+        Button button = buttonFactory.createButton();
+        BUTTONS.add(button);
+        buttonAddedListeners.forEach(listener -> listener.accept(button));
+    }
+
+    public static void removeButton(Button button) {
+        BUTTONS.remove(button);
+        buttonRemovedListeners.forEach(listener -> listener.accept(button));
+    }
+
+    public static List<Button> getButtons() {
+        return BUTTONS;
+    }
+
+    public static Button getButtonByName(String name) {
+        return BUTTONS.stream()
+                .filter(button -> button.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static void addButtonAddedListener(Consumer<Button> listener) {
+        buttonAddedListeners.add(listener);
+    }
+
+    public static void addButtonRemovedListener(Consumer<Button> listener) {
+        buttonRemovedListeners.add(listener);
+    }
+
+    // Predefined buttons registered at initialization
+    static {
+        addButton(() -> createButton(
+                "Build/Repair",
+                "textures/icons/items/shovel.png",
+                Keybindings.build,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.BUILD_REPAIR,
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.BUILD_REPAIR),
+                "hud.actionbuttons.reignofnether.build_repair"
+        ));
+
+        addButton(() -> createButton(
+                "Gather",
+                null, // Dynamic icon based on gather target
+                Keybindings.gather,
+                () -> UnitClientEvents.getSelectedUnitResourceTarget() != ResourceName.NONE,
+                () -> sendUnitCommand(UnitAction.TOGGLE_GATHER_TARGET),
+                "hud.actionbuttons.reignofnether.gather"
+        ));
+
+        addButton(() -> createButton(
+                "Attack",
+                "textures/icons/items/sword.png",
+                Keybindings.attack,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.ATTACK,
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.ATTACK),
+                "hud.actionbuttons.reignofnether.attack"
+        ));
+
+        addButton(() -> createButton(
+                "Stop",
+                "textures/icons/items/barrier.png",
+                Keybindings.stop,
+                () -> false,
+                () -> sendUnitCommand(UnitAction.STOP),
+                "hud.actionbuttons.reignofnether.stop"
+        ));
+
+        addButton(() -> createButton(
+                "Hold Position",
+                "textures/icons/items/chestplate.png",
+                Keybindings.hold,
+                () -> {
+                    LivingEntity entity = HudClientEvents.hudSelectedEntity;
+                    return entity instanceof Unit unit && unit.getHoldPosition();
+                },
+                () -> sendUnitCommand(UnitAction.HOLD),
+                "hud.actionbuttons.reignofnether.hold_position"
+        ));
+
+        addButton(() -> createButton(
+                "Move",
+                "textures/icons/items/boots.png",
+                Keybindings.move,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.MOVE,
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.MOVE),
+                "hud.actionbuttons.reignofnether.move"
+        ));
+
+        addButton(() -> createButton(
+                "Garrison",
+                "textures/block/ladder.png",
+                Keybindings.garrison,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.GARRISON,
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.GARRISON),
+                "hud.actionbuttons.reignofnether.garrison"
+        ));
+
+        addButton(() -> createButton(
+                "Ungarrison",
+                "textures/block/oak_trapdoor.png",
+                Keybindings.garrison,
+                () -> false,
+                () -> sendUnitCommand(UnitAction.UNGARRISON),
+                "hud.actionbuttons.reignofnether.ungarrison"
+        ));
+    }
 }

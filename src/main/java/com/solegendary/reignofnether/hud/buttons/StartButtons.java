@@ -15,55 +15,104 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 public class StartButtons {
 
     public static final int ICON_SIZE = 14;
+    private static final List<Button> BUTTONS = new ArrayList<>();
+    private static final List<Consumer<Button>> buttonAddedListeners = new ArrayList<>();
+    private static final List<Consumer<Button>> buttonRemovedListeners = new ArrayList<>();
 
-    public static Button villagerStartButton = new Button(
-        "Villagers",
-            ICON_SIZE,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/villager.png"),
-        (Keybinding) null,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_VILLAGERS,
-        () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.PLACE_WORKERS_B) || !PlayerClientEvents.canStartRTS,
-        () -> true,
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_VILLAGERS),
-        () -> { },
-        List.of(
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.villagers.reignofnether.first"), Style.EMPTY),
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.villagers.reignofnether.second"), Style.EMPTY)
-        )
-    );
+    static {
+        // Register default start buttons
+        addButton(StartButtons::createVillagerStartButton);
+        addButton(StartButtons::createMonsterStartButton);
+        addButton(StartButtons::createPiglinStartButton);
+    }
 
-    public static Button monsterStartButton = new Button(
-        "Monsters",
-            ICON_SIZE,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/creeper.png"),
-        (Keybinding) null,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_MONSTERS,
-        () -> TutorialClientEvents.isEnabled() || !PlayerClientEvents.canStartRTS,
-        () -> !TutorialClientEvents.isEnabled(),
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_MONSTERS),
-        () -> { },
-        List.of(
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.monsters.reignofnether.first"), Style.EMPTY),
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.monsters.reignofnether.second"), Style.EMPTY)
-        )
-    );
+    private static Button createVillagerStartButton() {
+        return new Button(
+                "Villagers",
+                ICON_SIZE,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/villager.png"),
+                (Keybinding) null,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_VILLAGERS,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.PLACE_WORKERS_B) || !PlayerClientEvents.canStartRTS,
+                () -> true,
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_VILLAGERS),
+                () -> {},
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.villagers.reignofnether.first"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.villagers.reignofnether.second"), Style.EMPTY)
+                )
+        );
+    }
 
-    public static Button piglinStartButton = new Button(
-        "Piglins",
-            ICON_SIZE,
-        new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/grunt.png"),
-        (Keybinding) null,
-        () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_PIGLINS,
-        () -> TutorialClientEvents.isEnabled() || !PlayerClientEvents.canStartRTS,
-        () -> !TutorialClientEvents.isEnabled(),
-        () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_PIGLINS),
-        () -> { },
-        List.of(
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.piglins.reignofnether.first"), Style.EMPTY),
-            FormattedCharSequence.forward(I18n.get("hud.startbuttons.piglins.reignofnether.second"), Style.EMPTY)
-        )
-    );
+
+    private static Button createMonsterStartButton() {
+        return new Button(
+                "Monsters",
+                ICON_SIZE,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/creeper.png"),
+                (Keybinding) null,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_MONSTERS,
+                () -> TutorialClientEvents.isEnabled() || !PlayerClientEvents.canStartRTS,
+                () -> !TutorialClientEvents.isEnabled(),
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_MONSTERS),
+                () -> { },
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.monsters.reignofnether.first"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.monsters.reignofnether.second"), Style.EMPTY)
+                )
+        );
+    }
+
+    private static Button createPiglinStartButton() {
+        return new Button(
+                "Piglins",
+                ICON_SIZE,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/grunt.png"),
+                (Keybinding) null,
+                () -> CursorClientEvents.getLeftClickAction() == UnitAction.STARTRTS_PIGLINS,
+                () -> TutorialClientEvents.isEnabled() || !PlayerClientEvents.canStartRTS,
+                () -> !TutorialClientEvents.isEnabled(),
+                () -> CursorClientEvents.setLeftClickAction(UnitAction.STARTRTS_PIGLINS),
+                () -> { },
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.piglins.reignofnether.first"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.startbuttons.piglins.reignofnether.second"), Style.EMPTY)
+                )
+        );
+    }
+
+    // Dynamic button management methods
+    public static void addButton(ActionButtons.ButtonFactory buttonFactory) {
+        Button button = buttonFactory.createButton();
+        BUTTONS.add(button);
+        buttonAddedListeners.forEach(listener -> listener.accept(button));
+    }
+
+    public static void removeButton(Button button) {
+        BUTTONS.remove(button);
+        buttonRemovedListeners.forEach(listener -> listener.accept(button));
+    }
+
+    public static Button getButtonByName(String name) {
+        return BUTTONS.stream().filter(button -> button.getName().equals(name)).findFirst().orElse(null);
+    }
+
+    public static List<Button> getButtons() {
+        return BUTTONS;
+    }
+
+    public static void addButtonAddedListener(Consumer<Button> listener) {
+        buttonAddedListeners.add(listener);
+    }
+
+    public static void addButtonRemovedListener(Consumer<Button> listener) {
+        buttonRemovedListeners.add(listener);
+    }
 }
+
