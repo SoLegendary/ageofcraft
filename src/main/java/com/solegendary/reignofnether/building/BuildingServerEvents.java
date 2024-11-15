@@ -97,7 +97,7 @@ public class BuildingServerEvents {
             ));
             ReignOfNether.LOGGER.info("saved buildings/nether in serverevents: " + b.originPos);
         });
-        buildingData.save();
+        buildingData.saveData();
         serverLevel.getDataStorage().save();
     }
 
@@ -109,7 +109,7 @@ public class BuildingServerEvents {
         NetherZoneSaveData netherData = NetherZoneSaveData.getInstance(serverLevel);
         netherData.netherZones.clear();
         netherData.netherZones.addAll(netherZones);
-        netherData.save();
+        netherData.saveData();
         serverLevel.getDataStorage().save();
 
         ReignOfNether.LOGGER.info("saved " + netherZones.size() + " netherzones in serverevents");

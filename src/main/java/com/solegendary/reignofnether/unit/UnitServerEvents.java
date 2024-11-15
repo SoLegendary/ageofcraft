@@ -118,7 +118,7 @@ public class UnitServerEvents {
                         + e.getId());
             }
         });
-        data.save();
+        data.saveData();
         serverLevel.getDataStorage().save();
     }
 

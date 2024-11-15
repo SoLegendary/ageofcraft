@@ -103,7 +103,7 @@ public class PlayerServerEvents {
         RTSPlayerSaveData data = RTSPlayerSaveData.getInstance(serverLevel);
         data.rtsPlayers.clear();
         data.rtsPlayers.addAll(rtsPlayers);
-        data.save();
+        data.saveData();
         serverLevel.getDataStorage().save();
     }
 

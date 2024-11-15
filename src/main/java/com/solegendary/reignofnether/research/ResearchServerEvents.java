@@ -22,7 +22,7 @@ public class ResearchServerEvents {
             ResearchSaveData researchData = ResearchSaveData.getInstance(serverLevel);
             researchData.researchItems.clear();
             researchData.researchItems.addAll(researchItems);
-            researchData.save();
+            researchData.saveData();
             serverLevel.getDataStorage().save();
 
             ReignOfNether.LOGGER.info("saved " + researchItems.size() + " researchItems in serverevents");
@@ -35,15 +35,19 @@ public class ResearchServerEvents {
 
         if (level != null) {
             serverLevel = level;
-            ResearchSaveData researchData = ResearchSaveData.getInstance(level);
-            researchItems.clear();
-            researchItems.addAll(researchData.researchItems);
-            for (Pair<String, String> researchItem : researchItems)
-                syncResearch(researchItem.getFirst());
 
-            ReignOfNether.LOGGER.info("loaded " + researchItems.size() + " researchItems in serverevents");
+            // Load or initialize ResearchSaveData
+            ResearchSaveData researchData = ResearchSaveData.getInstance(level);
+            researchItems.clear();  // Clear current items before loading
+            researchItems.addAll(researchData.researchItems);  // Sync from loaded data
+            for (Pair<String, String> researchItem : researchItems) {
+                syncResearch(researchItem.getFirst());
+            }
+
+            ReignOfNether.LOGGER.info("Loaded " + researchItems.size() + " researchItems in server events");
         }
     }
+
 
     public static void removeAllResearch() {
         researchItems.clear();

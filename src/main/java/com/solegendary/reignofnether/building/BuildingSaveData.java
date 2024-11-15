@@ -16,9 +16,50 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.ServerLifecycleHooks;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.ServerLifecycleHooks;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+@Mod.EventBusSubscriber
 public class BuildingSaveData extends SavedData {
 
     public final ArrayList<BuildingSave> buildings = new ArrayList<>();
+    private static final String DATA_NAME = "saved-building-data";
+    private static final String BACKUP_SUFFIX = "_backup";
 
     private static BuildingSaveData create() {
         return new BuildingSaveData();
@@ -31,13 +72,22 @@ public class BuildingSaveData extends SavedData {
             return create();
         }
         return server.overworld()
-            .getDataStorage()
-            .computeIfAbsent(BuildingSaveData::load, BuildingSaveData::create, "saved-building-data");
+                .getDataStorage()
+                .computeIfAbsent(BuildingSaveData::loadWithBackup, BuildingSaveData::create, DATA_NAME);
     }
 
-    public static BuildingSaveData load(CompoundTag tag) {
-        ReignOfNether.LOGGER.info("BuildingSaveData.load");
+    // Load with backup handling
+    public static BuildingSaveData loadWithBackup(CompoundTag tag) {
+        try {
+            return load(tag);
+        } catch (Exception e) {
+            ReignOfNether.LOGGER.error("Error loading BuildingSaveData, attempting backup", e);
+            return loadBackup();
+        }
+    }
 
+    // Standard load from main save data
+    private static BuildingSaveData load(CompoundTag tag) {
         BuildingSaveData data = create();
         ListTag ltag = (ListTag) tag.get("buildings");
 
@@ -54,16 +104,17 @@ public class BuildingSaveData extends SavedData {
                 boolean isBuilt = btag.getBoolean("isBuilt");
                 boolean isUpgraded = btag.getBoolean("isUpgraded");
                 Portal.PortalType portalType = Portal.PortalType.valueOf(btag.getString("portalType"));
+
                 data.buildings.add(new BuildingSave(pos,
-                    level,
-                    name,
-                    ownerName,
-                    rotation,
-                    rallyPoint,
-                    isDiagonalBridge,
-                    isBuilt,
-                    isUpgraded,
-                    portalType
+                        level,
+                        name,
+                        ownerName,
+                        rotation,
+                        rallyPoint,
+                        isDiagonalBridge,
+                        isBuilt,
+                        isUpgraded,
+                        portalType
                 ));
                 ReignOfNether.LOGGER.info("BuildingSaveData.load: " + ownerName + "|" + name);
             }
@@ -71,10 +122,24 @@ public class BuildingSaveData extends SavedData {
         return data;
     }
 
+    // Load from backup file
+    private static BuildingSaveData loadBackup() {
+        try {
+            File backupFile = new File(getSaveFilePath() + BACKUP_SUFFIX + ".dat");
+            if (!backupFile.exists()) return create();
+
+            try (FileInputStream fis = new FileInputStream(backupFile)) {
+                CompoundTag backupTag = NbtIo.readCompressed(fis);
+                return load(backupTag);
+            }
+        } catch (IOException e) {
+            ReignOfNether.LOGGER.error("Failed to load backup for BuildingSaveData", e);
+            return create();
+        }
+    }
+
     @Override
     public CompoundTag save(CompoundTag tag) {
-        ReignOfNether.LOGGER.info("BuildingSaveData.save");
-
         ListTag list = new ListTag();
         this.buildings.forEach(b -> {
             CompoundTag cTag = new CompoundTag();
@@ -96,10 +161,41 @@ public class BuildingSaveData extends SavedData {
             ReignOfNether.LOGGER.info("BuildingSaveData.save: " + b.ownerName + "|" + b.name);
         });
         tag.put("buildings", list);
+
+        createBackup(tag);  // Create backup each time data is saved
         return tag;
     }
 
-    public void save() {
+    // Backup creation method using NBTIO
+    private void createBackup(CompoundTag tag) {
+        File backupFile = new File(getSaveFilePath() + BACKUP_SUFFIX + ".dat");
+        try (FileOutputStream fos = new FileOutputStream(backupFile)) {
+            NbtIo.writeCompressed(tag, fos);
+        } catch (IOException e) {
+            ReignOfNether.LOGGER.error("Failed to create backup for BuildingSaveData", e);
+        }
+    }
+
+    // Helper function to get the main save file path
+    private static String getSaveFilePath() {
+        return "saves/" + DATA_NAME;
+    }
+
+    // Signals Minecraft to save this data
+    public void saveData() {
         this.setDirty();
+    }
+
+    // Set up periodic save using delayedExecutor
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        schedulePeriodicSave(event.getServer());
+    }
+
+    private static void schedulePeriodicSave(MinecraftServer server) {
+        CompletableFuture.delayedExecutor(5, TimeUnit.MINUTES).execute(() -> {
+            getInstance(server.overworld()).saveData();
+            schedulePeriodicSave(server);  // Reschedule for next save
+        });
     }
 }

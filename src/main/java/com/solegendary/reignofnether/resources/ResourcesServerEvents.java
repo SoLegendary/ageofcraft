@@ -81,7 +81,7 @@ public class ResourcesServerEvents {
             ReignOfNether.LOGGER.info(
                 "saved resources in serverevents: " + r.ownerName + "|" + r.food + "|" + r.wood + "|" + r.ore);
         });
-        data.save();
+        data.saveData();
         serverLevel.getDataStorage().save();
     }
 
