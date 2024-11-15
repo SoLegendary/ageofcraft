@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
@@ -116,57 +117,87 @@ public class BuildingServerboundPacket {
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         final var success = new AtomicBoolean(false);
         ctx.get().enqueueWork(() -> {
+            // Retrieve the authenticated player from the network context
+            ServerPlayer player = ctx.get().getSender();
+            if (player == null) {
+                System.out.println("Packet rejected: player is null");
+                return;
+            }
 
             Building building = null;
-            if (!List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action)) {
+            boolean requiresBuilding = !List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action);
+
+            if (requiresBuilding) {
                 building = findBuilding(false, this.buildingPos);
-                if (building == null)
+                if (building == null) {
+                    System.out.println("Building not found for action: " + this.action);
                     return;
+                }
+                // Check the building owner for non-PLACE actions, using building.ownerName
+                if (!this.action.equals(BuildingAction.PLACE) && !this.action.equals(BuildingAction.PLACE_AND_QUEUE)) {
+                    if (!player.getGameProfile().getName().equals(building.ownerName)) {
+                        System.out.println("Packet rejected: ownerName mismatch for building action " + this.action);
+                        return;
+                    }
+                }
             }
+
+            // For PLACE and PLACE_AND_QUEUE actions, validate this.ownerName with the player's name
+            if (List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action)) {
+                if (!player.getGameProfile().getName().equals(this.ownerName)) {
+                    System.out.println("Packet rejected: ownerName mismatch for PLACE or PLACE_AND_QUEUE action");
+                    return;
+                }
+            }
+
+            // Process actions based on the action type
             switch (this.action) {
-                case PLACE -> {
-                    BuildingServerEvents.placeBuilding(this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, false, isDiagonalBridge);
-                }
-                case PLACE_AND_QUEUE -> {
-                    BuildingServerEvents.placeBuilding(this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, true, isDiagonalBridge);
-                }
-                case DESTROY -> {
-                    BuildingServerEvents.cancelBuilding(building);
-                }
+                case PLACE -> BuildingServerEvents.placeBuilding(
+                        this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, false, isDiagonalBridge);
+                case PLACE_AND_QUEUE -> BuildingServerEvents.placeBuilding(
+                        this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, true, isDiagonalBridge);
+                case DESTROY -> BuildingServerEvents.cancelBuilding(building);
                 case SET_RALLY_POINT -> {
-                    if (building instanceof ProductionBuilding productionBuilding)
+                    if (building instanceof ProductionBuilding productionBuilding) {
                         productionBuilding.setRallyPoint(rallyPos);
+                    }
                 }
                 case SET_RALLY_POINT_ENTITY -> {
                     if (building instanceof ProductionBuilding productionBuilding) {
                         Entity e = building.level.getEntity(this.builderUnitIds[0]);
-                        if (e instanceof LivingEntity le)
+                        if (e instanceof LivingEntity le) {
                             productionBuilding.setRallyPointEntity(le);
+                        }
                     }
                 }
                 case START_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.startProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos);
-                    if (prodSuccess)
+                    boolean prodSuccess = ProductionBuilding.startProductionItem(
+                            ((ProductionBuilding) building), this.itemName, this.buildingPos);
+                    if (prodSuccess) {
                         BuildingClientboundPacket.startProduction(buildingPos, itemName);
+                    }
                 }
                 case CANCEL_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, true);
-                    if (prodSuccess)
+                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(
+                            ((ProductionBuilding) building), this.itemName, this.buildingPos, true);
+                    if (prodSuccess) {
                         BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
+                    }
                 }
                 case CANCEL_BACK_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, false);
-                    if (prodSuccess)
+                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(
+                            ((ProductionBuilding) building), this.itemName, this.buildingPos, false);
+                    if (prodSuccess) {
                         BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
+                    }
                 }
                 case CHECK_STOCKPILE_CHEST -> {
                     if (building instanceof AbstractStockpile ||
-                        building instanceof Portal portal && portal.portalType == Portal.PortalType.CIVILIAN)
+                            building instanceof Portal portal && portal.portalType == Portal.PortalType.CIVILIAN) {
                         AbstractStockpile.checkAndConsumeChestItems(building);
+                    }
                 }
-                case REQUEST_REPLACEMENT -> {
-                    BuildingServerEvents.replaceClientBuilding(buildingPos);
-                }
+                case REQUEST_REPLACEMENT -> BuildingServerEvents.replaceClientBuilding(buildingPos);
             }
             success.set(true);
         });
