@@ -122,7 +122,7 @@
   "abilities.reignofnether.spin_webs.tooltip1": "朝地面上吐出一块粘性蛛网",
   "abilities.reignofnether.spin_webs.tooltip2": "蛛网在 %d 秒后自动消失。",
   "abilities.reignofnether.spin_webs.tooltip3": "该技能无法在被骑乘时使用",
-  "abilities.reignofnether.spin_webs.tooltip4": "鼠标右击以自动释放该技能"
+  "abilities.reignofnether.spin_webs.tooltip4": "鼠标右击以自动释放该技能",
   "abilities.reignofnether.spin_webs.error1": "该技能无法在被骑乘时使用",
   "abilities.reignofnether.wither_cloud": "凋零死云",
   "abilities.reignofnether.wither_cloud.tooltip1": "使凋灵骷髅主动释放出一股环绕其周身的致命凋零效果粒子云，",
