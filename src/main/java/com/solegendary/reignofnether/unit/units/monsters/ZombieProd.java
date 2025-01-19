@@ -1,5 +1,8 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
+import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.sandbox.SandboxAction;
+import com.solegendary.reignofnether.unit.UnitAction;
 import net.minecraft.client.resources.language.I18n;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.*;
@@ -65,26 +68,47 @@ public class ZombieProd extends ProductionItem {
             return "Zombie";
     }
 
+    public static Button getPlaceButton() {
+        return new Button(
+                ZombieProd.itemName,
+                14,
+                getIcon(),
+                (Keybinding) null,
+                () -> false,
+                () -> false,
+                () -> true,
+                () -> CursorClientEvents.setLeftClickSandboxAction(SandboxAction.SPAWN_ZOMBIE),
+                null,
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie"), Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip2"), Style.EMPTY)
+                )
+        );
+    }
+
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
         return new Button(
-            ZombieProd.itemName,
-            14,
-            getIcon(),
-            hotkey,
-            () -> false,
-            () -> ResearchClient.hasResearch(ResearchHusks.itemName) || ResearchClient.hasResearch(ResearchDrowned.itemName),
-            () -> true,
-            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
-            null,
-            List.of(
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie"), Style.EMPTY.withBold(true)),
-                ResourceCosts.getFormattedCost(cost),
-                ResourceCosts.getFormattedPopAndTime(cost),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip1"), Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip2"), Style.EMPTY)
-            )
+                ZombieProd.itemName,
+                14,
+                getIcon(),
+                hotkey,
+                () -> false,
+                () -> ResearchClient.hasResearch(ResearchHusks.itemName) || ResearchClient.hasResearch(ResearchDrowned.itemName),
+                () -> true,
+                () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
+                null,
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie"), Style.EMPTY.withBold(true)),
+                        ResourceCosts.getFormattedCost(cost),
+                        ResourceCosts.getFormattedPopAndTime(cost),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip2"), Style.EMPTY)
+                )
         );
     }
 

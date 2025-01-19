@@ -17,7 +17,11 @@ Features
     [❌] Add Beacon
     [❌] Add Healing fountain
     [❌] save status to level
-    [❌] add add-unit options
+    [❌] add spawn-unit options
+    [❌] Give buildings ability to set flags
+        - Indestructible
+        - Neutral, owned, enemy
+        - Capturable
 
 
 
@@ -36,6 +40,8 @@ Quality of Life
 [❌] Prevent damage from fire blocks inside a flame sanctuary
 
 [❌] Show range of other buildings like library and lightning lab
+
+[❌] Add cheat 'slipslapslop' to prevent monsters being affected by sunlight
 
 
 Balancing

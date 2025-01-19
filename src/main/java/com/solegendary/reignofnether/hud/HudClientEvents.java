@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
-import com.solegendary.reignofnether.ability.abilities.SonicBoom;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
@@ -23,6 +22,7 @@ import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesClientEvents;
+import com.solegendary.reignofnether.sandbox.SandboxClientEvents;
 import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialStage;
@@ -45,7 +45,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -54,10 +53,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -855,8 +852,8 @@ public class HudClientEvents {
             blitY = screenHeight - iconFrameSize;
 
             ArrayList<Button> actionButtons = new ArrayList<>();
-            actionButtons.add(HudSandboxClientEvents.getToggleBuildingFactionButton());
-            actionButtons.add(HudSandboxClientEvents.getToggleBuildingCheatsButton());
+            actionButtons.add(SandboxClientEvents.getToggleBuildingFactionButton());
+            actionButtons.add(SandboxClientEvents.getToggleBuildingCheatsButton());
 
             for (Button actionButton : actionButtons) {
                 actionButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
@@ -866,7 +863,7 @@ public class HudClientEvents {
             blitX = 0;
             blitY = screenHeight - (iconFrameSize * 2) - 4;
 
-            List<AbilityButton> abilityButtons = HudSandboxClientEvents.getBuildingButtons();
+            List<AbilityButton> abilityButtons = SandboxClientEvents.getBuildingButtons();
             List<AbilityButton> shownAbilities = abilityButtons.stream()
                     .filter(ab -> !ab.isHidden.get() && !(ab.ability instanceof CallToArmsUnit))
                     .toList();

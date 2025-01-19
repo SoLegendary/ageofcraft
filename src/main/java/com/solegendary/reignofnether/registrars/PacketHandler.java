@@ -20,6 +20,7 @@ import com.solegendary.reignofnether.player.PlayerServerboundPacket;
 import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerboundPacket;
 import com.solegendary.reignofnether.resources.ResourcesClientboundPacket;
+import com.solegendary.reignofnether.sandbox.SandboxServerboundPacket;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.survival.SurvivalClientboundPacket;
 import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
@@ -213,6 +214,12 @@ public final class PacketHandler {
                 .encoder(ClientboundSyncResourceCostPacket::encode)
                 .decoder(ClientboundSyncResourceCostPacket::decode)
                 .consumer(ClientboundSyncResourceCostPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(SandboxServerboundPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(SandboxServerboundPacket::encode)
+                .decoder(SandboxServerboundPacket::new)
+                .consumer(SandboxServerboundPacket::handle)
                 .add();
     }
 }

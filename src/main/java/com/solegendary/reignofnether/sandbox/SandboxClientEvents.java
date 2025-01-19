@@ -1,12 +1,18 @@
-package com.solegendary.reignofnether.hud;
+package com.solegendary.reignofnether.sandbox;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
+import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
+import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.hud.Button;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerboundPacket;
+import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerUnit;
 import com.solegendary.reignofnether.unit.units.piglins.GruntUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
@@ -16,13 +22,19 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.util.List;
 
-public class HudSandboxClientEvents {
+public class SandboxClientEvents {
 
     // NONE == neutral
     private static Faction buildingFaction = Faction.NONE;
+
+    private static final Minecraft MC = Minecraft.getInstance();
 
     public static List<AbilityButton> getNeutralBuildingButtons() {
         return List.of(
@@ -83,7 +95,9 @@ public class HudSandboxClientEvents {
         return new Button(
                 "Toggle Building Cheats",
                 Button.itemIconSize,
-                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/command_block_side.png"),
+                hasCheats ?
+                    new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/command_block_side.png") :
+                    new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/command_block_side_dark.png"),
                 (Keybinding) null,
                 () -> false,
                 () -> false,
@@ -103,5 +117,24 @@ public class HudSandboxClientEvents {
                         FormattedCharSequence.forward(I18n.get("sandbox.reignofnether.building_cheats1"), Style.EMPTY)
                 )
         );
+    }
+
+    @SubscribeEvent
+    public static void onMouseClick(ScreenEvent.MouseButtonPressed.Post evt) {
+        if (!OrthoviewClientEvents.isEnabled()) return;
+
+        // prevent clicking behind HUDs
+        if (HudClientEvents.isMouseOverAnyButtonOrHud() || MC.player == null) {
+            CursorClientEvents.setLeftClickSandboxAction(null);
+            return;
+        }
+
+        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1) {
+           SandboxAction sandboxAction = CursorClientEvents.getLeftClickSandboxAction();
+           if (sandboxAction != null && sandboxAction.name().toLowerCase().contains("spawn_")) {
+                SandboxServerboundPacket.spawnUnit(CursorClientEvents.getLeftClickSandboxAction(),
+                        MC.player.getName().getString(), CursorClientEvents.getPreselectedBlockPos());
+           }
+        }
     }
 }

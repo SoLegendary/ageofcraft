@@ -242,12 +242,26 @@ public class UnitClientEvents {
 
     public static void sendUnitCommand(UnitAction action) {
         BlockPos bp = getPreselectedBlockPos();
-        if (action == UnitAction.STARTRTS_VILLAGERS) {
-            PlayerServerboundPacket.startRTS(Faction.VILLAGERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
-        } else if (action == UnitAction.STARTRTS_MONSTERS) {
-            PlayerServerboundPacket.startRTS(Faction.MONSTERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
-        } else if (action == UnitAction.STARTRTS_PIGLINS) {
-            PlayerServerboundPacket.startRTS(Faction.PIGLINS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+
+        if (action.name().toLowerCase().contains("startrts")) {
+            if (action == UnitAction.STARTRTS_VILLAGERS) {
+                PlayerServerboundPacket.startRTS(Faction.VILLAGERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            } else if (action == UnitAction.STARTRTS_MONSTERS) {
+                PlayerServerboundPacket.startRTS(Faction.MONSTERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            } else if (action == UnitAction.STARTRTS_PIGLINS) {
+                PlayerServerboundPacket.startRTS(Faction.PIGLINS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            }
+            return;
+        }
+        else if (action.name().toLowerCase().contains("sandbox_spawn")) {
+            if (action == UnitAction.STARTRTS_VILLAGERS) {
+                PlayerServerboundPacket.startRTS(Faction.VILLAGERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            } else if (action == UnitAction.STARTRTS_MONSTERS) {
+                PlayerServerboundPacket.startRTS(Faction.MONSTERS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            } else if (action == UnitAction.STARTRTS_PIGLINS) {
+                PlayerServerboundPacket.startRTS(Faction.PIGLINS, (double) bp.getX(), (double) bp.getY(), (double) bp.getZ());
+            }
+            return;
         }
 
         if (MC.player != null) {

@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceSources;
+import com.solegendary.reignofnether.sandbox.SandboxAction;
 import com.solegendary.reignofnether.survival.spawners.WaveSpawner;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -70,8 +71,9 @@ public class CursorClientEvents {
     // pos of cursor on screen for box selections
     private static Vec2 cursorLeftClickDownPos = new Vec2(-1,-1);
     private static Vec2 cursorLeftClickDragPos = new Vec2(-1,-1);
-    // attack that is performed on the next left click
+    // action that is performed on the next left click
     private static UnitAction leftClickAction = null;
+    private static SandboxAction leftClickSandboxAction = null;
 
     public static Vector3d getCursorWorldPos() {
         return cursorWorldPos;
@@ -82,7 +84,11 @@ public class CursorClientEvents {
     public static UnitAction getLeftClickAction() {
         return leftClickAction;
     }
+    public static SandboxAction getLeftClickSandboxAction() {
+        return leftClickSandboxAction;
+    }
     public static void setLeftClickAction(UnitAction actionName) {
+        leftClickSandboxAction = null;
         if (actionName != null &&
             List.of(UnitAction.STARTRTS_VILLAGERS,
                 UnitAction.STARTRTS_MONSTERS,
@@ -93,6 +99,10 @@ public class CursorClientEvents {
             leftClickAction = actionName;
         else if (actionName == null)
             leftClickAction = null;
+    }
+    public static void setLeftClickSandboxAction(SandboxAction actionName) {
+        leftClickAction = null;
+        leftClickSandboxAction = actionName;
     }
 
     private static final ResourceLocation TEXTURE_CURSOR = new ResourceLocation("reignofnether", "textures/cursors/customcursor.png");
