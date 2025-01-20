@@ -1,21 +1,21 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
-import com.solegendary.reignofnether.cursor.CursorClientEvents;
-import com.solegendary.reignofnether.hud.AbilityButton;
-import com.solegendary.reignofnether.sandbox.SandboxAction;
-import com.solegendary.reignofnether.sandbox.SandboxClientEvents;
-import net.minecraft.client.resources.language.I18n;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
 import com.solegendary.reignofnether.building.ProductionBuilding;
 import com.solegendary.reignofnether.building.ProductionItem;
+import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.researchItems.ResearchStrays;
+import com.solegendary.reignofnether.research.researchItems.ResearchPoisonSpiders;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.sandbox.SandboxAction;
+import com.solegendary.reignofnether.sandbox.SandboxClientEvents;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -24,16 +24,16 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class StrayProd extends ProductionItem {
+public class NecromancerProd extends ProductionItem {
 
-    public final static String itemName = "Stray";
-    public final static ResourceCost cost = ResourceCosts.STRAY;
+    public final static String itemName = "Necromancer";
+    public final static ResourceCost cost = ResourceCosts.NECROMANCER;
 
-    public StrayProd(ProductionBuilding building) {
+    public NecromancerProd(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
             if (!level.isClientSide())
-                building.produceUnit((ServerLevel) level, EntityRegistrar.STRAY_UNIT.get(), building.ownerName, true);
+                building.produceUnit((ServerLevel) level, EntityRegistrar.NECROMANCER_UNIT.get(), building.ownerName, true);
         };
         this.foodCost = cost.food;
         this.woodCost = cost.wood;
@@ -42,13 +42,13 @@ public class StrayProd extends ProductionItem {
     }
 
     public String getItemName() {
-        return StrayProd.itemName;
+        return NecromancerProd.itemName;
     }
 
     public static AbilityButton getPlaceButton() {
         return new AbilityButton(
                 itemName,
-                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/stray.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/necromancer.png"),
                 null,
                 () -> false,
                 () -> false,
@@ -59,11 +59,12 @@ public class StrayProd extends ProductionItem {
                 },
                 null,
                 List.of(
-                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray"), Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer"), Style.EMPTY.withBold(true)),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip2"), Style.EMPTY),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray.tooltip2"), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip3"), Style.EMPTY)
                 ),
                 null
         );
@@ -71,34 +72,33 @@ public class StrayProd extends ProductionItem {
 
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
         return new Button(
-            StrayProd.itemName,
+            NecromancerProd.itemName,
             14,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/stray.png"),
+            new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/necromancer.png"),
             hotkey,
             () -> false,
             () -> false,
-            () -> ResearchClient.hasResearch(ResearchStrays.itemName),
+            () -> true,
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray"), Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer"), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 ResourceCosts.getFormattedPopAndTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray.tooltip1"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip1"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip2"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray.tooltip2"), Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.stray.tooltip3"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.necromancer.tooltip3"), Style.EMPTY)
             )
         );
     }
 
     public Button getCancelButton(ProductionBuilding prodBuilding, boolean first) {
         return new Button(
-            StrayProd.itemName,
+            NecromancerProd.itemName,
             14,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/stray.png"),
+            new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/necromancer.png"),
             (Keybinding) null,
             () -> false,
             () -> false,

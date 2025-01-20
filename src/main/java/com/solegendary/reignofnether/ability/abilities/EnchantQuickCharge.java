@@ -28,7 +28,7 @@ public class EnchantQuickCharge extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_QUICKCHARGE;
     public static final Enchantment actualEnchantment = Enchantments.QUICK_CHARGE;
-    public static final int enchantLevel = 1;
+    public static final int enchantLevel = 2;
 
     public EnchantQuickCharge(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_QUICK_CHARGE);

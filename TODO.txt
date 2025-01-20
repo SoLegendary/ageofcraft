@@ -41,7 +41,7 @@ Quality of Life
 
 [❌] Show range of other buildings like library and lightning lab
 
-[🟡] Add cheat 'slipslopslap' to prevent monsters being affected by sunlight
+[🟡] Added cheatcode 'slipslopslap', which stops monsters from being affected by sunlight
 
 
 Balancing
@@ -50,8 +50,8 @@ Balancing
 
 Villagers
 ---------
-[❌] Enchant Quick Shot buffed to Quick Shot II
-    - Cost raised by ~50%
+[❌] Enchant Quick Shot buffed to Quick Shot II (now 0.5s faster firing)
+    - Cost raised by 10 wood, 5 ore
 
 
 Piglins
@@ -59,7 +59,7 @@ Piglins
 
 Monsters
 --------
-
+[❌] Give witches, portals, towers and sculk catalysts 50% magic resistance
 
 Localisation
 ------------
@@ -87,4 +87,8 @@ Localisation
     "sandbox.reignofnether.building_cheats_off": "Building Cheats: OFF",
     "sandbox.reignofnether.building_cheats1": "(Click to toggle)"
 
+    "time.reignofnether.night_circle_change": "(Click to change)",
+
     "hud.faction.reignofnether.neutral": "Neutral",
+    "hud.units.reignofnether.hero": "Hero",
+    "units.monsters.reignofnether.warden.tooltip2": "Wardens are slowed under sunlight",

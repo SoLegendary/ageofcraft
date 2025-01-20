@@ -12,10 +12,10 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerboundPacket;
-import com.solegendary.reignofnether.unit.units.monsters.ZombieProd;
-import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerUnit;
-import com.solegendary.reignofnether.unit.units.piglins.GruntUnit;
-import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
+import com.solegendary.reignofnether.unit.units.monsters.*;
+import com.solegendary.reignofnether.unit.units.neutral.EndermanProd;
+import com.solegendary.reignofnether.unit.units.piglins.*;
+import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -39,6 +39,8 @@ public class SandboxClientEvents {
 
     public static Faction getFaction() { return faction; }
 
+    public static String spawnUnitName = "";
+
     public static List<AbilityButton> getNeutralBuildingButtons() {
         return List.of(
             TownCentre.getBuildButton(Keybindings.keyQ)
@@ -57,16 +59,47 @@ public class SandboxClientEvents {
     public static List<AbilityButton> getUnitButtons() {
         return switch (faction) {
             case VILLAGERS -> List.of(
-
+                    /*
+                VillagerProd.getPlaceButton(),
+                VindicatorProd.getPlaceButton(),
+                PillagerProd.getPlaceButton(),
+                IronGolemProd.getPlaceButton(),
+                WitchProd.getPlaceButton(),
+                EvokerProd.getPlaceButton(),
+                RavagerProd.getPlaceButton(),
+                RoyalGuardProd.getPlaceButton()
+                     */
             );
             case MONSTERS -> List.of(
-                ZombieProd.getPlaceButton()
+                ZombieVillagerProd.getPlaceButton(),
+                ZombieProd.getPlaceButton(),
+                DrownedProd.getPlaceButton(),
+                HuskProd.getPlaceButton(),
+                SkeletonProd.getPlaceButton(),
+                StrayProd.getPlaceButton(),
+                SpiderProd.getPlaceButton(),
+                PoisonSpiderProd.getPlaceButton(),
+                CreeperProd.getPlaceButton(),
+                SlimeProd.getPlaceButton(),
+                WardenProd.getPlaceButton(),
+                ZombiePiglinProd.getPlaceButton(),
+                ZoglinProd.getPlaceButton(),
+                NecromancerProd.getPlaceButton()
             );
             case PIGLINS -> List.of(
-
+                    /*
+                GruntProd.getPlaceButton(),
+                BruteProd.getPlaceButton(),
+                HeadhunterProd.getPlaceButton(),
+                HoglinProd.getPlaceButton(),
+                WitherSkeletonProd.getPlaceButton(),
+                MagmaCubeProd.getPlaceButton(),
+                GhastProd.getPlaceButton(),
+                PiglinMerchantProd.getPlaceButton()
+                     */
             );
             case NONE -> List.of(
-
+                EndermanProd.getPlaceButton()
             );
         };
     }

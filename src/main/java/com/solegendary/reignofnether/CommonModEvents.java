@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.unit.modelling.models.RoyalGuardModel;
 import com.solegendary.reignofnether.unit.modelling.models.VillagerUnitModel;
 import com.solegendary.reignofnether.unit.modelling.renderers.*;
 import com.solegendary.reignofnether.unit.units.monsters.*;
+import com.solegendary.reignofnether.unit.units.neutral.EndermanUnit;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.votesystem.VoteCommand;

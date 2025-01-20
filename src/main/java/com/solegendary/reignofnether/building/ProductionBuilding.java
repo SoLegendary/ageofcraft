@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.units.monsters.*;
+import com.solegendary.reignofnether.unit.units.neutral.EndermanProd;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.unit.UnitAction;
@@ -191,7 +192,6 @@ public abstract class ProductionBuilding extends Building {
                 case SlimeProd.itemName -> prodItem = new SlimeProd(building);
                 case WardenProd.itemName -> prodItem = new WardenProd(building);
                 case RavagerProd.itemName -> prodItem = new RavagerProd(building);
-
                 case GruntProd.itemName -> prodItem = new GruntProd(building);
                 case BruteProd.itemName -> prodItem = new BruteProd(building);
                 case HeadhunterProd.itemName -> prodItem = new HeadhunterProd(building);
@@ -200,6 +200,10 @@ public abstract class ProductionBuilding extends Building {
                 case WitherSkeletonProd.itemName -> prodItem = new WitherSkeletonProd(building);
                 case MagmaCubeProd.itemName -> prodItem = new MagmaCubeProd(building);
                 case GhastProd.itemName -> prodItem = new GhastProd(building);
+                case NecromancerProd.itemName -> prodItem = new NecromancerProd(building);
+                //case PiglinMerchantProd.itemName -> prodItem = new PiglinMerchantProd(building);
+                //case RoyalGuardProd.itemName -> prodItem = new RoyalGuardProd(building);
+                case EndermanProd.itemName -> prodItem = new EndermanProd(building);
 
                 case ResearchVindicatorAxes.itemName -> prodItem = new ResearchVindicatorAxes(building);
                 case ResearchPillagerCrossbows.itemName -> prodItem = new ResearchPillagerCrossbows(building);

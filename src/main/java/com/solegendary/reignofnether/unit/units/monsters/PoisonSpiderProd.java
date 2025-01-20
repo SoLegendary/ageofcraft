@@ -1,5 +1,9 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
+import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.sandbox.SandboxAction;
+import com.solegendary.reignofnether.sandbox.SandboxClientEvents;
 import net.minecraft.client.resources.language.I18n;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.*;
@@ -38,6 +42,30 @@ public class PoisonSpiderProd extends ProductionItem {
 
     public String getItemName() {
         return PoisonSpiderProd.itemName;
+    }
+
+    public static AbilityButton getPlaceButton() {
+        return new AbilityButton(
+                itemName,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/cave_spider.png"),
+                null,
+                () -> false,
+                () -> false,
+                () -> true,
+                () -> {
+                    CursorClientEvents.setLeftClickSandboxAction(SandboxAction.SPAWN_UNIT);
+                    SandboxClientEvents.spawnUnitName = itemName;
+                },
+                null,
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.poison_spider"), Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.poison_spider.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward("", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.poison_spider.tooltip2"), Style.EMPTY)
+                ),
+                null
+        );
     }
 
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {

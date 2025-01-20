@@ -42,6 +42,10 @@ public class ResourceCosts {
     public static final ResourceCost GHAST = new ResourceCost(ID, "GHAST");
     public static final ResourceCost MAGMA_CUBE = new ResourceCost(ID, "MAGMA_CUBE");
 
+    public static final ResourceCost NECROMANCER = new ResourceCost(ID, "NECROMANCER");
+    public static final ResourceCost ROYAL_GUARD = new ResourceCost(ID, "ROYAL_GUARD");
+    public static final ResourceCost PIGLIN_MERCHANT = new ResourceCost(ID, "PIGLIN_MERCHANT");
+
     //BUILDINGS
 
     public static final ResourceCost STOCKPILE = new ResourceCost(ID, "STOCKPILE");
@@ -172,6 +176,7 @@ public class ResourceCosts {
         POISON_SPIDER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.POISON_SPIDER);
         SLIME.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.SLIME);
         WARDEN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.WARDEN);
+        NECROMANCER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.NECROMANCER);
         ZOMBIE_PIGLIN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ZOMBIE_PIGLIN);
         ZOGLIN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ZOGLIN);
         // Villagers
@@ -183,6 +188,7 @@ public class ResourceCosts {
         WITCH.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.WITCH);
         EVOKER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.EVOKER);
         RAVAGER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.RAVAGER);
+        ROYAL_GUARD.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ROYAL_GUARD);
         // Piglins
         GRUNT.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.GRUNT);
         BRUTE.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.BRUTE);
@@ -192,6 +198,7 @@ public class ResourceCosts {
         WITHER_SKELETON.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.WITHER_SKELETON);
         GHAST.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.GHAST);
         MAGMA_CUBE.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.MAGMA_CUBE);
+        PIGLIN_MERCHANT.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.PIGLIN_MERCHANT);
         // ******************* BUILDINGS ******************* //
         STOCKPILE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.STOCKPILE);
         OAK_BRIDGE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.OAK_BRIDGE);
@@ -267,6 +274,5 @@ public class ResourceCosts {
         ENCHANT_SHARPNESS.bakeValues(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_SHARPNESS);
         ENCHANT_MULTISHOT.bakeValues(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MULTISHOT);
         ENCHANT_VIGOR.bakeValues(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_VIGOR);
-        
     }
 }

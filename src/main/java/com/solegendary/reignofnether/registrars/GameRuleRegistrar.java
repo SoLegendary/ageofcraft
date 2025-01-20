@@ -44,7 +44,7 @@ public class GameRuleRegistrar {
         IMPROVED_PATHFINDING = GameRules.register("improvedPathfinding", GameRules.Category.MOBS,
                 GameRules.BooleanValue.create(true)
         );
-        // locks the camera to a specific Y level instead of it being calculated dynamically
+        // sets the minimum Y level for the camera so it doesn't fall into the void
         GROUND_Y_LEVEL = GameRules.register("groundYLevel", GameRules.Category.PLAYER,
                 GameRules.IntegerValue.create(0)
         );
