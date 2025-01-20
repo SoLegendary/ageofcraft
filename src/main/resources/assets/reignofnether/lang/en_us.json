@@ -436,6 +436,7 @@
     "hud.faction.reignofnether.monster": "Monster",
     "hud.faction.reignofnether.piglin": "Piglin",
     "hud.faction.reignofnether.random": "Random",
+    "hud.faction.reignofnether.neutral": "Neutral",
 
     "server.reignofnether.is_defeated": "%s has %s and is defeated!",
     "server.reignofnether.lost_buildings": "lost all their buildings",
@@ -791,6 +792,7 @@
     "units.monsters.reignofnether.slime.tooltip1": "A sentient cube of green slime which can consume",
     "units.monsters.reignofnether.slime.tooltip2": "other cubes to grow in size, health and damage.",
     "units.monsters.reignofnether.slime.tooltip3": "Requires a Slime Pit.",
+    "units.monsters.reignofnether.slime.tooltip4": "Slimes are slowed under sunlight",
     "units.monsters.reignofnether.slime.size": "(size %d)",
     "units.monsters.reignofnether.warden": "Warden",
     "units.monsters.reignofnether.warden.tooltip1": "A powerful but blind monster that can fire sonic booms.",
@@ -907,12 +909,17 @@
     "hud.gamemode.reignofnether.changemode": "Right-click to change game mode",
     "hud.gamemode.reignofnether.locked": "(locked)",
 
-    "sandbox.reignofnether.building_faction1": "Building Faction: %s",
-    "sandbox.reignofnether.building_faction2": "(Click to change)",
+    "config.reignofnether.warn_config_change": "Server host has changed configs",
+    "config.reignofnether.hide_config_change": "(Click to hide)",
+
+    "sandbox.reignofnether.faction_button1": "Faction: %s",
+    "sandbox.reignofnether.faction_button2": "(Click to change)",
+    "sandbox.reignofnether.menu_type_button_buildings": "Menu: Buildings",
+    "sandbox.reignofnether.menu_type_button_units": "Menu: Units",
+    "sandbox.reignofnether.menu_type_button_other": "Menu: Other",
+    "sandbox.reignofnether.menu_type_button1": "(Click to change)",
     "sandbox.reignofnether.building_cheats_on": "Building Cheats: ON",
     "sandbox.reignofnether.building_cheats_off": "Building Cheats: OFF",
-    "sandbox.reignofnether.building_cheats1": "(Click to toggle)",
+    "sandbox.reignofnether.building_cheats1": "(Click to toggle)"
 
-    "config.reignofnether.warn_config_change": "Server host has changed configs",
-    "config.reignofnether.hide_config_change": "(Click to hide)"
 }

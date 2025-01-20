@@ -566,7 +566,6 @@ public class UnitClientEvents {
                 sendUnitCommand(CursorClientEvents.getLeftClickAction());
             }
 
-
             // left click -> select a single unit
             // if shift is held, deselect a unit or add it to the selected group
             else if (preselectedUnits.size() == 1 && !isLeftClickAttack()) {

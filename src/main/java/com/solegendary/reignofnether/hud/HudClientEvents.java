@@ -23,6 +23,7 @@ import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesClientEvents;
 import com.solegendary.reignofnether.sandbox.SandboxClientEvents;
+import com.solegendary.reignofnether.sandbox.SandboxMenuType;
 import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialStage;
@@ -852,8 +853,12 @@ public class HudClientEvents {
             blitY = screenHeight - iconFrameSize;
 
             ArrayList<Button> actionButtons = new ArrayList<>();
-            actionButtons.add(SandboxClientEvents.getToggleBuildingFactionButton());
-            actionButtons.add(SandboxClientEvents.getToggleBuildingCheatsButton());
+            actionButtons.add(SandboxClientEvents.getToggleBuildingOrUnitsButton());
+            actionButtons.add(SandboxClientEvents.getToggleFactionButton());
+
+            if (SandboxClientEvents.sandboxMenuType == SandboxMenuType.BUILDINGS) {
+                actionButtons.add(SandboxClientEvents.getToggleBuildingCheatsButton());
+            }
 
             for (Button actionButton : actionButtons) {
                 actionButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
@@ -863,7 +868,11 @@ public class HudClientEvents {
             blitX = 0;
             blitY = screenHeight - (iconFrameSize * 2) - 4;
 
-            List<AbilityButton> abilityButtons = SandboxClientEvents.getBuildingButtons();
+            List<AbilityButton> abilityButtons = switch(SandboxClientEvents.sandboxMenuType) {
+                case BUILDINGS -> SandboxClientEvents.getBuildingButtons();
+                default -> SandboxClientEvents.getUnitButtons();
+            };
+
             List<AbilityButton> shownAbilities = abilityButtons.stream()
                     .filter(ab -> !ab.isHidden.get() && !(ab.ability instanceof CallToArmsUnit))
                     .toList();

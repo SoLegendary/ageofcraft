@@ -41,7 +41,7 @@ Quality of Life
 
 [❌] Show range of other buildings like library and lightning lab
 
-[❌] Add cheat 'slipslapslop' to prevent monsters being affected by sunlight
+[🟡] Add cheat 'slipslopslap' to prevent monsters being affected by sunlight
 
 
 Balancing
@@ -69,8 +69,22 @@ Localisation
 
     "server.reignofnether.started_sandbox": "%s has started their game (SANDBOX)",
 
+    "units.monsters.reignofnether.slime.tooltip4": "Slimes are slowed under sunlight",
+
     "hud.gamemode.reignofnether.sandbox1": "SANDBOX",
     "hud.gamemode.reignofnether.sandbox2": "Customise your map by freely placing units and, ",
     "hud.gamemode.reignofnether.sandbox3": "buildings, including special neutral buildings.",
     "hud.gamemode.reignofnether.sandbox4": "Enables cheats.",
     "hud.gamemode.reignofnether.sandbox_confirm": "Confirm sandbox mode",
+
+    "sandbox.reignofnether.faction_button1": "Building Faction: %s",
+    "sandbox.reignofnether.faction_button2": "(Click to change)",
+    "sandbox.reignofnether.menu_type_button_buildings": "Menu: Buildings",
+    "sandbox.reignofnether.menu_type_button_units": "Menu: Units",
+    "sandbox.reignofnether.menu_type_button_other": "Menu: Other",
+    "sandbox.reignofnether.menu_type_button1": "(Click to change)",
+    "sandbox.reignofnether.building_cheats_on": "Building Cheats: ON",
+    "sandbox.reignofnether.building_cheats_off": "Building Cheats: OFF",
+    "sandbox.reignofnether.building_cheats1": "(Click to toggle)"
+
+    "hud.faction.reignofnether.neutral": "Neutral",

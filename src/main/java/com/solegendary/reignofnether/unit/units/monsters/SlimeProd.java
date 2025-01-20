@@ -58,7 +58,7 @@ public class SlimeProd extends ProductionItem {
                 FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.slime.tooltip1"), Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.slime.tooltip2"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.slime.tooltip3"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.slime.tooltip4"), Style.EMPTY)
             )
         );
     }

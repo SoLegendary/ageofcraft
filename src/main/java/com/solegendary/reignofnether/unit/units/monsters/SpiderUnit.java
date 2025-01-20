@@ -8,6 +8,7 @@ import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
 import com.solegendary.reignofnether.unit.Checkpoint;
@@ -195,7 +196,9 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
             AttackerUnit.tick(this);
 
             // apply slowness level 2 during daytime for a short time repeatedly
-            if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() &&
+                    !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false) &&
+                    !ResearchServerEvents.playerHasCheat(getOwnerName(), "slipslopslap"))
                 this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
 
             if (getWebGoal() != null)

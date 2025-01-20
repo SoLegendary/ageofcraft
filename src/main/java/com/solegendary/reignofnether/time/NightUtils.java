@@ -1,7 +1,11 @@
 package com.solegendary.reignofnether.time;
 
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
+import com.solegendary.reignofnether.unit.interfaces.Unit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -29,7 +33,13 @@ public class NightUtils {
         return false;
     }
     public static boolean isSunBurnTick(Mob mob) {
-        if (mob.tickCount % 10 == 0 && TimeUtils.isDay(mob.level.getDayTime()) && !mob.level.isClientSide) {
+        if (mob.level.isClientSide)
+            return false;
+
+        if (mob instanceof Unit unit && ResearchServerEvents.playerHasCheat(unit.getOwnerName(), "slipslopslap"))
+            return false;
+
+        if (mob.tickCount % 10 == 0 && TimeUtils.isDay(mob.level.getDayTime())) {
             BlockPos blockpos = new BlockPos(mob.getX(), mob.getEyeY(), mob.getZ());
             boolean isProtected = mob.isInWaterRainOrBubble() || mob.isInPowderSnow || mob.wasInPowderSnow || mob.isOnFire();
             // Return early if mob is protected or sky is not visible

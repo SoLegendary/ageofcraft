@@ -87,13 +87,15 @@ public class PlayerServerEvents {
     // greedisgood X - gain X of each resource
     // foodforthought - ignore soft population caps
     // thereisnospoon - allow changing survival wave by clicking the wave indicator and using debug commands
+    // slipslopslap - monster units are unaffected by sunlight
     public static final List<String> singleWordCheats = List.of(
         "warpten",
         "operationcwal",
         "modifythephasevariance",
         "medievalman",
         "foodforthought",
-        "thereisnospoon"
+        "thereisnospoon",
+        "slipslopslap"
     );
 
     public static void saveRTSPlayers() {

@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.sandbox.SandboxAction;
 import com.solegendary.reignofnether.unit.UnitAction;
 import net.minecraft.client.resources.language.I18n;
@@ -68,12 +69,11 @@ public class ZombieProd extends ProductionItem {
             return "Zombie";
     }
 
-    public static Button getPlaceButton() {
-        return new Button(
+    public static AbilityButton getPlaceButton() {
+        return new AbilityButton(
                 ZombieProd.itemName,
-                14,
                 getIcon(),
-                (Keybinding) null,
+                null,
                 () -> false,
                 () -> false,
                 () -> true,
@@ -85,7 +85,8 @@ public class ZombieProd extends ProductionItem {
                         FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip1"), Style.EMPTY),
                         FormattedCharSequence.forward("", Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie.tooltip2"), Style.EMPTY)
-                )
+                ),
+                null
         );
     }
 
